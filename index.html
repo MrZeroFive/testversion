@@ -1,0 +1,2906 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<meta name="theme-color" content="#f3f4f6">
+<link rel="manifest" href="./manifest.json">
+<link rel="icon" type="image/png" sizes="32x32" href="./icons/icon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="./icons/icon-16.png">
+<link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192.png">
+<link rel="shortcut icon" href="./favicon.ico">
+<link rel="apple-touch-icon" sizes="180x180" href="./icons/icon-180.png">
+<title>PPS TOOLS</title>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@600;700&family=Baloo+2:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Inter:wght@500;600;700;800&family=Noto+Nastaliq+Urdu:wght@400;600;700&family=PT+Serif:wght@400;700&display=swap');
+
+:root{
+  --bg1:#f8f9fa; --bg2:#eceff2; --bg3:#e3e7eb;
+  --card1:#ffffff; --card2:#fbfbfc;
+  --pill:#f3f4f6; --pill-border:#e3e6ea;
+  --ink:#14202b; --ink-soft:#66717e;
+  --accent1:#ff8a2a; --accent2:#0e5a73;
+  --hero1:#ffffff; --hero2:#ffffff; --hero3:#ff8a2a; --hero4:#0e5a73; --hero5:#0b3f55;
+  --absent-dot:#e8501f; --leave-dot:#ff9d2e;
+  --wa-green:#178a4c; --wa-green-2:#1fa85c;
+  --danger:#e0453a; --warn:#c9701a; --warn-bg:#fdeee0;
+  --orange:linear-gradient(135deg,#ff9a3c 0%,#ff741b 100%);
+  --teal:linear-gradient(135deg,#1f7591 0%,#0d5068 100%);
+  --deep:linear-gradient(135deg,#0f4a60 0%,#082c3d 100%);
+  --orange-ink:#d9550d;
+  --tile-shadow:0 14px 26px rgba(16,40,60,.16);
+  --card-shadow:0 18px 40px rgba(16,40,60,.10), 0 2px 6px rgba(16,40,60,.05);
+  --scene:
+    radial-gradient(circle at 104% 58%, #ff5e1a 0, #ff7a22 70px, transparent 71px),
+    radial-gradient(circle at -6% 106%, #0f5a73 0, #0b3f55 120px, transparent 121px),
+    radial-gradient(circle at 100% 0%, rgba(255,255,255,.95) 0, transparent 220px),
+    radial-gradient(circle at 0% 35%, rgba(205,210,217,.55) 0, transparent 200px),
+    linear-gradient(160deg,#f8f9fa 0%,#eceff2 60%,#e3e7eb 100%);
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0; font-family:'Inter',Arial,sans-serif; min-height:100vh;
+  background:
+    radial-gradient(circle at 12% 16%, rgba(227,239,38,.18), transparent 40%),
+    radial-gradient(circle at 88% 10%, rgba(226,251,206,.14), transparent 42%),
+    radial-gradient(circle at 92% 68%, rgba(7,102,83,.35), transparent 45%),
+    radial-gradient(circle at 8% 80%, rgba(255,253,238,.10), transparent 40%),
+    radial-gradient(circle at 50% 100%, rgba(6,35,29,.5), transparent 45%),
+    linear-gradient(150deg, var(--bg1) 0%, var(--bg2) 55%, var(--bg3) 100%);
+  color:var(--ink); padding:30px 14px 44px; font-weight:600;
+}
+.container{max-width:600px;margin:auto; position:relative}
+
+/* ---------- shared card / form primitives (liquid glass) ---------- */
+.card{
+  background:linear-gradient(150deg, var(--card1) 0%, var(--card2) 100%);
+  backdrop-filter:blur(22px) saturate(140%);
+  -webkit-backdrop-filter:blur(22px) saturate(140%);
+  border:1px solid rgba(255,255,255,.55);
+  border-radius:34px;
+  padding:26px 22px 24px;
+  box-shadow:
+    0 22px 0 -4px rgba(7,102,83,.10),
+    0 30px 50px rgba(7,102,83,.20),
+    inset 0 2px 0 rgba(255,255,255,.7),
+    inset 0 -18px 30px rgba(7,102,83,.08);
+  position:relative;
+  margin-bottom:16px;
+}
+
+.head-row{display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap; margin-bottom:18px}
+h1,.panel-title{
+  margin:0; font-family:'Inter',Arial,sans-serif; font-weight:700;
+  font-size:27px; color:var(--ink); letter-spacing:.3px;
+}
+.glitch-letter{display:inline-block;animation:glitchLoop 1.8s linear infinite;animation-delay:calc(var(--i) * .04s)}
+@keyframes glitchLoop{
+  0%,80%,100%{transform:translate(0,0); text-shadow:none}
+  82%{transform:translate(-3px,2px); text-shadow:2px 0 #ff2fd1,-2px 0 #2fe0ff}
+  84%{transform:translate(3px,-2px); text-shadow:-2px 0 #2fe0ff,2px 0 #ff2fd1}
+  86%{transform:translate(-2px,1px); text-shadow:2px 0 #ff2fd1,-2px 0 var(--accent1)}
+  88%{transform:translate(2px,-1px); text-shadow:-1px 0 #2fe0ff,1px 0 var(--accent2)}
+  90%{transform:translate(-1px,0); text-shadow:1px 0 var(--accent1),-1px 0 #ff2fd1}
+  92%{transform:translate(0,0); text-shadow:none}
+}
+.subtitle{
+  margin:0; font-size:11.5px; color:#fff; font-weight:700; letter-spacing:.4px;
+  background:linear-gradient(135deg, var(--accent1), var(--accent2));
+  padding:9px 16px; border-radius:999px; white-space:nowrap;
+  box-shadow:0 8px 16px rgba(12,52,44,.4), inset 0 1px 0 rgba(255,255,255,.4);
+}
+.panel-desc{margin:0 0 6px; font-size:13px; color:var(--ink-soft); font-weight:600; line-height:1.5}
+
+label,.lbl{display:block;font-weight:700;margin:16px 0 8px;color:var(--ink); font-size:12.5px; text-transform:uppercase; letter-spacing:.4px; opacity:.75}
+.field{margin-bottom:2px}
+.field .lbl{margin-top:16px}
+
+input,textarea{
+  width:100%;padding:14px 18px;border:1px solid var(--pill-border);
+  border-radius:22px;font-size:15.5px;outline:none;background:var(--pill);
+  backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
+  color:var(--ink); font-family:inherit; font-weight:700;
+  box-shadow:inset 0 2px 4px rgba(7,102,83,.08), 0 1px 0 rgba(255,255,255,.7);
+
+}
+input[type="text"],input[type="tel"],input[type="date"],input[type="number"]{border-radius:999px}
+textarea{border-radius:20px; resize:vertical}
+input::placeholder,textarea::placeholder{color:rgba(255,255,255,.42); font-weight:600}
+input:focus,textarea:focus{
+  background:rgba(255,255,255,.22);
+  box-shadow:inset 0 2px 4px rgba(7,102,83,.08), 0 0 0 3px rgba(227,239,38,.35);
+}
+input[readonly]{color:var(--ink-soft)}
+#att-className{
+  appearance:none; -webkit-appearance:none; -moz-appearance:none;
+  width:100%; padding:14px 40px 14px 18px; border:1px solid var(--pill-border);
+  border-radius:999px; font-size:15.5px; outline:none;
+  background:var(--pill) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23f5f8ef' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E") no-repeat right 16px center/14px;
+  backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
+  color:var(--ink); font-family:inherit; font-weight:700; cursor:pointer;
+  box-shadow:inset 0 2px 4px rgba(7,102,83,.08), 0 1px 0 rgba(255,255,255,.25);
+  text-transform:uppercase; letter-spacing:.3px;
+}
+#att-className:focus{
+  background-color:rgba(255,255,255,.22);
+  box-shadow:inset 0 2px 4px rgba(7,102,83,.08), 0 0 0 3px rgba(227,239,38,.35);
+}
+#att-className.error-input{
+  box-shadow:inset 0 2px 4px rgba(224,69,58,.15), 0 0 0 3px rgba(224,69,58,.45) !important;
+}
+#att-className option{color:#0c2b22; background:#fdfdf5; text-transform:none}
+
+/* class-name validation error */
+.field-error{
+  display:none; color:var(--danger); font-size:12px; font-weight:700;
+  margin-top:7px; padding-left:6px; direction:rtl; text-align:right;
+}
+
+/* Attendance time-lock */
+.att-lock{
+  text-align:center; padding:30px 10px 10px; direction:rtl;
+}
+.att-lock-icon{font-size:36px; margin-bottom:10px}
+.live-clock{width:88px; height:88px; margin:0 auto 14px}
+.clock-face{
+  position:relative; width:100%; height:100%; border-radius:50%;
+  background:linear-gradient(150deg, var(--card1) 0%, var(--card2) 100%);
+  border:2px solid var(--accent2);
+  box-shadow:0 10px 22px rgba(12,52,44,.35), inset 0 2px 0 rgba(255,255,255,.7);
+}
+.clock-face::before,.clock-face::after,
+.clock-face .tick-3,.clock-face .tick-9{
+  content:""; position:absolute; background:var(--accent2); border-radius:2px;
+}
+.clock-face::before{top:5px; left:50%; width:3px; height:8px; transform:translateX(-50%)}
+.clock-face::after{bottom:5px; left:50%; width:3px; height:8px; transform:translateX(-50%)}
+.clock-hand{
+  position:absolute; left:50%; bottom:50%; transform-origin:50% 100%;
+  background:var(--ink); border-radius:3px;
+}
+.clock-hand.hour{width:4px; height:22px; margin-left:-2px; background:var(--ink)}
+.clock-hand.minute{width:3px; height:30px; margin-left:-1.5px; background:var(--accent2)}
+.clock-hand.second{width:2px; height:33px; margin-left:-1px; background:var(--danger)}
+.clock-center{
+  position:absolute; top:50%; left:50%; width:9px; height:9px; border-radius:50%;
+  background:var(--accent2); transform:translate(-50%,-50%); box-shadow:0 0 0 2px #fff;
+}
+.att-lock-title{font-family:'Inter',Arial,sans-serif; font-weight:700; font-size:18px; color:var(--ink); margin-bottom:8px}
+.att-lock-msg{font-size:13.5px; color:var(--ink-soft); font-weight:600; line-height:1.6}
+.att-unlock-row{
+  display:flex; gap:8px; margin-top:18px; direction:ltr;
+}
+.att-unlock-row input{
+  flex:1; text-align:center; letter-spacing:3px; border-radius:999px;
+}
+.att-unlock-row .btn{width:auto; padding:14px 22px; white-space:nowrap}
+.att-unlock-error{
+  min-height:16px; color:var(--danger); font-size:12px; font-weight:700;
+  margin-top:9px; direction:rtl;
+}
+.field-error.show{display:block}
+
+.section-title{
+  font-size:12px; font-weight:800; color:var(--accent1); text-transform:uppercase;
+  letter-spacing:.5px; margin:4px 0 12px; padding-left:12px; border-left:3px solid var(--accent1);
+}
+
+.section-heading{display:flex;justify-content:space-between;align-items:center;margin-top:22px}
+.section-heading label{margin:0}
+.count-badge{
+  font-size:11.5px; font-weight:800; color:#fff;
+  background:linear-gradient(135deg, var(--accent1), var(--accent2));
+  padding:3px 11px; border-radius:999px;
+  box-shadow:0 4px 10px rgba(12,52,44,.35);
+}
+
+.hint{font-size:11px; color:var(--ink-soft); margin-top:6px; font-weight:600; padding-left:6px}
+
+/* generic pill button */
+.btn{
+  border:none; cursor:pointer; font-family:'Inter',Arial,sans-serif; font-weight:700;
+  border-radius:999px; display:flex; align-items:center; justify-content:center; gap:7px;
+  width:100%; padding:15px 12px; font-size:14.5px; letter-spacing:.3px;
+
+}
+.btn:active{transform:scale(.97)}
+.btn-primary{
+  color:#fff; background:linear-gradient(150deg, var(--accent1), var(--accent2));
+  box-shadow:0 10px 0 -3px rgba(7,102,83,.12), 0 14px 24px rgba(12,52,44,.45), inset 0 1px 0 rgba(255,255,255,.4);
+}
+.btn-primary:hover{filter:brightness(1.05)}
+.btn-wa{
+  color:#fff; background:linear-gradient(150deg, var(--wa-green-2), var(--wa-green));
+  box-shadow:0 10px 0 -3px rgba(23,138,76,.18), 0 14px 24px rgba(23,138,76,.4), inset 0 1px 0 rgba(255,255,255,.35);
+}
+.btn-wa:hover{filter:brightness(1.05)}
+.btn-soft{
+  color:var(--ink); background:var(--pill);
+  box-shadow:0 10px 0 -3px rgba(7,102,83,.08), 0 14px 24px rgba(7,102,83,.18), inset 0 1px 0 rgba(255,255,255,.8);
+}
+.btn-soft:hover{background:rgba(255,255,255,.24)}
+.actions-row{display:grid; grid-template-columns:1fr 1fr; gap:10px}
+.wa-dot{display:inline-block; width:7px; height:7px; border-radius:50%; background:var(--wa-green); margin-right:2px; vertical-align:middle}
+
+/* ---------- tab bar ---------- */
+.tabbar{
+  display:flex; gap:6px; background:rgba(255,255,255,.10); padding:6px;
+  border-radius:999px; margin-bottom:18px;
+  box-shadow:inset 0 2px 6px rgba(7,102,83,.12), 0 6px 16px rgba(7,102,83,.12);
+}
+.tab-btn{
+  flex:1; border:none; background:transparent; padding:12px 6px; border-radius:999px;
+  font-family:'Inter',Arial,sans-serif; font-weight:700; font-size:12.5px; color:var(--ink-soft);
+  cursor:pointer; letter-spacing:.2px; text-transform:uppercase;
+}
+.tab-btn.active{
+  background:linear-gradient(135deg, var(--accent1), var(--accent2)); color:#fff;
+  box-shadow:0 6px 14px rgba(12,52,44,.4);
+}
+.tab-panel{display:none}
+.tab-panel.active{display:block}
+
+/* ---------- Attendance-tab specifics ---------- */
+.list-panel{
+  background:rgba(255,255,255,.10);
+  border-radius:22px;
+  padding:10px;
+  margin-top:8px;
+  box-shadow:inset 0 2px 8px rgba(7,102,83,.10);
+  position:relative;
+}
+.list-panel::before{
+  content:"";
+  position:absolute; top:-7px; left:50%; transform:translateX(-50%);
+  width:38px; height:6px; border-radius:6px;
+  background:rgba(255,255,255,.45);
+  box-shadow:0 1px 2px rgba(7,102,83,.2);
+}
+.list-panel:empty{display:none}
+.add{
+  border:none; background:rgba(255,255,255,.14); color:var(--accent1);
+  width:100%; padding:12px; border-radius:999px; font-size:14px; font-weight:800;
+  cursor:pointer; margin-top:10px; display:flex; align-items:center; justify-content:center; gap:6px;
+  box-shadow:0 4px 12px rgba(7,102,83,.12), inset 0 1px 0 rgba(255,255,255,.25);
+
+}
+.add:hover{background:rgba(255,255,255,.22)}
+.add:active{transform:scale(.98)}
+.add .plus{font-size:17px; line-height:1}
+
+.row{display:flex; align-items:center; gap:10px; margin-top:8px; background:transparent;
+  border-radius:999px; padding:8px 10px 8px 8px;
+}
+.row:first-child{margin-top:0}
+.roll-no{
+  flex:0 0 auto; width:30px; height:30px; border-radius:50%;
+  background:linear-gradient(140deg, var(--accent1), var(--accent2));
+  color:#fff; font-size:12.5px; font-weight:800;
+  display:flex; align-items:center; justify-content:center; font-family:'Inter',Arial,sans-serif;
+  box-shadow:0 4px 8px rgba(12,52,44,.4), inset 0 1px 0 rgba(255,255,255,.5);
+}
+#att-absentList .roll-no{background:linear-gradient(140deg,#ff8a8a,var(--absent-dot))}
+#att-leaveList .roll-no{background:linear-gradient(140deg,#ffcb7a,var(--leave-dot))}
+.row input{flex:1; box-shadow:none; background:transparent; border:none; padding:6px 4px; border-radius:0}
+.row input:focus{box-shadow:none; background:transparent}
+.remove{
+  flex:0 0 auto; width:28px; height:28px; border:0;
+  background:linear-gradient(140deg, var(--accent1), var(--accent2));
+  color:#fff; font-size:16px; cursor:pointer; border-radius:50%;
+  box-shadow:0 4px 8px rgba(12,52,44,.4);
+
+  display:flex; align-items:center; justify-content:center;
+}
+.remove:hover{filter:brightness(1.1)}
+.remove:active{transform:scale(.9)}
+.att-buttons{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:30px}
+.stamp{
+  position:relative; border:none; border-radius:999px;
+  padding:16px 8px; font-family:'Inter',Arial,sans-serif; font-weight:700; font-size:14.5px;
+  letter-spacing:.4px; cursor:pointer;
+
+}
+.stamp:active{transform:scale(.96)}
+.stamp.female{
+  color:#fff; background:linear-gradient(150deg, #ff8fd8, #e8459f);
+  box-shadow:0 10px 0 -3px rgba(190,30,120,.18), 0 14px 24px rgba(232,69,159,.45), inset 0 1px 0 rgba(255,255,255,.4);
+}
+.stamp.female:hover{filter:brightness(1.05)}
+.stamp.male{
+  color:#fff; background:linear-gradient(150deg, var(--accent1), var(--accent2));
+  box-shadow:0 10px 0 -3px rgba(7,102,83,.12), 0 14px 24px rgba(12,52,44,.45), inset 0 1px 0 rgba(255,255,255,.4);
+}
+.stamp.male:hover{filter:brightness(1.05)}
+
+/* ---------- Fee Receipt tab specifics ---------- */
+.check-row{
+  display:flex; align-items:center; justify-content:space-between; gap:10px;
+  padding:12px 16px; border-radius:999px; margin-bottom:9px;
+  background:var(--pill); box-shadow:inset 0 2px 4px rgba(7,102,83,.08), 0 1px 0 rgba(255,255,255,.7);
+
+}
+.check-row.on{box-shadow:inset 0 2px 4px rgba(7,102,83,.08), 0 0 0 3px rgba(227,239,38,.4); background:rgba(255,255,255,.20)}
+.check-row label{display:flex; align-items:center; gap:9px; font-size:14px; font-weight:700; flex:1; margin:0; text-transform:none; letter-spacing:0; opacity:1}
+.check-row input[type="checkbox"]{width:19px; height:19px; accent-color:var(--accent2)}
+.check-row .amt{width:100px; padding:8px 12px; display:none; font-size:14px; border-radius:14px}
+.check-row.on .amt{display:block}
+
+/* fee-type dropdown */
+.fee-dropdown{position:relative}
+.fee-dropdown-trigger{
+  width:100%; display:flex; align-items:center; justify-content:space-between; gap:8px;
+  padding:14px 18px; border-radius:999px; border:1px solid var(--pill-border);
+  background:var(--pill); color:var(--ink); font-family:inherit; font-weight:700; font-size:14.5px;
+  cursor:pointer; box-shadow:inset 0 2px 4px rgba(7,102,83,.08), 0 1px 0 rgba(255,255,255,.7);
+}
+.fee-dropdown-trigger .chev{ font-size:11px; color:var(--ink-soft)}
+.fee-dropdown.open .fee-dropdown-trigger .chev{transform:rotate(180deg)}
+.fee-dropdown-panel{
+  display:none; margin-top:10px; background:rgba(255,255,255,.10); border-radius:20px; padding:10px;
+  box-shadow:inset 0 2px 8px rgba(7,102,83,.10);
+}
+.fee-dropdown.open .fee-dropdown-panel{display:block}
+
+.total-box{
+  background:rgba(255,255,255,.10); border-radius:20px; padding:14px 18px;
+  display:flex; justify-content:space-between; align-items:center; margin:14px 0;
+  font-weight:700; box-shadow:inset 0 2px 6px rgba(7,102,83,.08);
+}
+.total-box .amount{font-family:'Inter',Arial,sans-serif; font-size:19px; color:var(--accent1)}
+
+.receipt{
+  background:rgba(255,255,255,.55); border-radius:24px; padding:22px 20px 18px;
+  position:relative; overflow:hidden; margin-top:10px;
+  box-shadow:inset 0 2px 8px rgba(7,102,83,.10);
+  --ink:#0c2b22; --ink-soft:#4f6a5d; --accent2:#076653;
+}
+.watermark{
+  position:absolute; top:38%; left:50%; transform:translate(-50%,-50%) rotate(-18deg);
+  font-family:'Inter',Arial,sans-serif; font-size:60px; font-weight:700; color:var(--accent2);
+  opacity:.05; white-space:nowrap; pointer-events:none;
+}
+.receipt-head{position:relative; display:flex; justify-content:space-between; align-items:flex-start}
+.receipt-head .r{text-align:right}
+.receipt-head .r .lbl{font-size:10px; margin:0 0 2px; opacity:.7; text-transform:uppercase; letter-spacing:.3px}
+.receipt-head .r .val{font-family:'Inter',Arial,sans-serif; font-size:14px; font-weight:700; color:var(--accent2)}
+.receipt-no-blank{display:inline-block; min-width:60px; border-bottom:1.3px solid var(--ink-soft)}
+.dashed{height:0; border-top:1.5px dashed rgba(28,37,54,.18); margin:16px 0 14px}
+.grid2{position:relative; display:grid; grid-template-columns:1fr 1fr; row-gap:12px; column-gap:10px; font-size:13.5px}
+.grid2 .l{font-size:10px; color:var(--ink-soft); margin-bottom:2px; text-transform:uppercase; letter-spacing:.3px; font-weight:700}
+.grid2 .v{font-weight:700; color:var(--ink)}
+.fee-list-title{font-size:11px; color:var(--ink-soft); margin-bottom:6px; font-weight:700; text-transform:uppercase; letter-spacing:.3px}
+.fee-line{display:flex; justify-content:space-between; font-size:13.5px; padding:6px 0; border-bottom:1px solid rgba(28,37,54,.10)}
+.fee-line .amt{font-weight:700}
+.grand-total{
+  margin-top:14px; background:rgba(255,255,255,.6); border-radius:16px; padding:13px 16px;
+  display:flex; justify-content:space-between; align-items:center; box-shadow:inset 0 2px 6px rgba(7,102,83,.08);
+}
+.grand-total .label{font-size:12.5px; color:var(--ink); font-weight:700}
+.grand-total .amount{font-family:'Inter',Arial,sans-serif; font-size:20px; font-weight:700; color:var(--accent2)}
+.arrears-row{
+  margin-top:8px; background:var(--warn-bg); border-radius:16px; padding:11px 16px;
+  display:flex; justify-content:space-between; align-items:center;
+}
+.arrears-row .label{font-size:12px; color:var(--warn); font-weight:700}
+.arrears-row .amount{font-family:'Inter',Arial,sans-serif; font-size:15px; font-weight:700; color:var(--warn)}
+.receipt-msg{
+  margin-top:16px; font-size:14.5px; color:var(--ink); line-height:1.85;
+  font-family:'Noto Nastaliq Urdu', serif; direction:rtl; text-align:right; white-space:pre-line;
+}
+#fr-message{direction:rtl; text-align:right; font-family:'Noto Nastaliq Urdu', serif; font-size:15px}
+
+/* ---------- Fee Reminder tab specifics ---------- */
+.total-payable{
+  margin-top:19px; padding:16px 18px; background:rgba(255,255,255,.10); border-radius:20px;
+  display:flex; justify-content:space-between; align-items:center; direction:ltr;
+  box-shadow:inset 0 2px 6px rgba(7,102,83,.08);
+}
+.total-payable span{font-size:13px; font-weight:700; text-transform:uppercase; letter-spacing:.3px; color:var(--ink-soft)}
+.total-payable strong{font-family:'Inter',Arial,sans-serif; font-size:22px; color:var(--accent1)}
+.fm-buttons{display:grid; gap:10px; margin-top:16px}
+.fm-preview{display:none; margin-top:16px; padding:16px; border-radius:20px; background:rgba(255,255,255,.10)}
+.fm-preview.show{display:block}
+.fm-preview h3{margin:0 0 10px; font-family:'Inter',Arial,sans-serif; color:var(--accent1); font-size:15px}
+.fm-preview-text{white-space:pre-wrap; direction:rtl; text-align:right; font-family:'Noto Nastaliq Urdu', serif; font-size:14px; line-height:1.8; color:var(--ink)}
+.fm-preview-type{font-size:11px; color:var(--ink-soft); margin-bottom:10px; font-weight:600}
+
+#preview{
+  white-space:pre-wrap;background:rgba(255,255,255,.10);border:none;
+  border-radius:18px;padding:14px;margin-top:18px;font-size:13.5px;display:none;
+  font-family:'Inter',monospace; color:var(--ink); font-weight:600;
+  box-shadow:inset 0 2px 6px rgba(7,102,83,.10);
+}
+.footer{text-align:center;color:rgba(28,37,54,.55);font-size:11px;margin-top:16px; font-weight:700}
+
+/* ---------- Welcome-page footer badge ---------- */
+.welcome-footer{
+  position:absolute; bottom:26px; left:0; right:0;
+  display:flex; justify-content:center; pointer-events:none;
+}
+.welcome-footer-badge{
+  display:inline-block; pointer-events:auto;
+  padding:9px 22px; border-radius:999px;
+  font-family:'Inter',Arial,sans-serif; font-weight:700; font-size:12.5px; letter-spacing:.4px;
+  color:#fff;
+  background:linear-gradient(135deg, var(--hero3), var(--hero4));
+  box-shadow:0 10px 22px rgba(12,52,44,.4), inset 0 1px 0 rgba(255,255,255,.4);
+}
+
+@media(max-width:430px){
+  .att-buttons{grid-template-columns:1fr 1fr; gap:8px}
+  .stamp{padding:13px 4px; font-size:12.5px}
+  .card{padding:22px 16px 20px; border-radius:28px}
+  .subtitle{font-size:10px; padding:8px 12px}
+  .grid2{grid-template-columns:1fr}
+  .actions-row{grid-template-columns:1fr}
+}
+
+/* ---------- Welcome screen ---------- */
+#welcome{
+  position:fixed; inset:0; z-index:50;
+  display:flex; align-items:center; justify-content:center;
+  padding:20px;
+  background:
+    radial-gradient(circle at 12% 16%, rgba(227,239,38,.20), transparent 38%),
+    radial-gradient(circle at 88% 10%, rgba(226,251,206,.14), transparent 42%),
+    radial-gradient(circle at 92% 68%, rgba(7,102,83,.35), transparent 42%),
+    radial-gradient(circle at 8% 80%, rgba(255,253,238,.10), transparent 38%),
+    linear-gradient(150deg, var(--bg1) 0%, var(--bg2) 55%, var(--bg3) 100%);
+
+}
+#welcome.hide{opacity:0; visibility:hidden; pointer-events:none}
+@keyframes welcomeCardIn{
+  0%{opacity:0; transform:translateY(22px) scale(.94)}
+  100%{opacity:1; transform:translateY(0) scale(1)}
+}
+@keyframes welcomeWave{
+  0%,60%,100%{transform:rotate(0deg)}
+  10%{transform:rotate(16deg)}
+  20%{transform:rotate(-10deg)}
+  30%{transform:rotate(16deg)}
+  40%{transform:rotate(-6deg)}
+  50%{transform:rotate(10deg)}
+}
+@keyframes welcomeGreetFade{
+  0%{opacity:0; transform:translateY(-6px)}
+  100%{opacity:1; transform:translateY(0)}
+}
+.welcome-card{
+  max-width:380px; width:100%; text-align:center;
+  background:linear-gradient(150deg, var(--card1) 0%, var(--card2) 100%);
+  backdrop-filter:blur(22px) saturate(140%);
+  -webkit-backdrop-filter:blur(22px) saturate(140%);
+  border:1px solid rgba(255,255,255,.55);
+  border-radius:34px; padding:44px 30px 34px;
+  box-shadow:
+    0 22px 0 -4px rgba(7,102,83,.10),
+    0 30px 50px rgba(7,102,83,.35),
+    inset 0 2px 0 rgba(255,255,255,.6),
+    inset 0 -18px 30px rgba(7,102,83,.10);
+  animation:welcomeCardIn .65s cubic-bezier(.22,1,.36,1) both;
+
+}
+.welcome-badge{
+  width:78px; height:78px; margin:0 auto 22px; border-radius:50%;
+  background:linear-gradient(135deg, var(--hero1), var(--hero2), var(--hero3), var(--hero4));
+  display:flex; align-items:center; justify-content:center;
+  font-size:34px; box-shadow:0 12px 24px rgba(12,52,44,.45), inset 0 2px 0 rgba(255,255,255,.4);
+
+}
+.welcome-badge .wave-hand{
+  display:inline-block;
+  font-size:32px; line-height:1;
+  transform-origin:70% 75%;
+  animation:welcomeWave 2.4s ease-in-out .5s infinite;
+}
+.welcome-title{font-family:'Inter',Arial,sans-serif; font-weight:700; font-size:24px; color:var(--ink); margin:0 0 8px}
+#welcomeGreeting{display:block; font-size:13px; color:var(--ink-soft); font-weight:700; letter-spacing:.4px; text-transform:uppercase; margin-bottom:4px; animation:welcomeGreetFade .6s ease-out .2s both}
+.welcome-sub{font-size:14px; color:var(--ink-soft); font-weight:600; margin:0 0 28px; line-height:1.5}
+.welcome-start{
+  width:100%; border:none; border-radius:999px; padding:16px 8px;
+  font-family:'Inter',Arial,sans-serif; font-weight:700; font-size:15.5px; letter-spacing:.4px;
+  color:#fff; cursor:pointer;
+  background:linear-gradient(150deg, var(--accent1), var(--accent2));
+  box-shadow:0 10px 0 -3px rgba(7,102,83,.12), 0 14px 24px rgba(12,52,44,.45), inset 0 1px 0 rgba(255,255,255,.4);
+
+}
+.welcome-start:hover{filter:brightness(1.05)}
+.welcome-start:active{transform:scale(.97)}
+
+#appRoot{opacity:0}
+#appRoot.show{opacity:1}
+
+/* ---------- Menu screen (after Get Started) ---------- */
+.menu-screen{
+  position:fixed; inset:0; z-index:45;
+  display:flex; align-items:center; justify-content:center;
+  padding:20px;
+  background:
+    radial-gradient(circle at 12% 16%, rgba(227,239,38,.20), transparent 38%),
+    radial-gradient(circle at 88% 10%, rgba(226,251,206,.14), transparent 42%),
+    radial-gradient(circle at 92% 68%, rgba(7,102,83,.35), transparent 42%),
+    radial-gradient(circle at 8% 80%, rgba(255,253,238,.10), transparent 38%),
+    linear-gradient(150deg, var(--bg1) 0%, var(--bg2) 55%, var(--bg3) 100%);
+  opacity:0; visibility:hidden;
+}
+.menu-screen.show{opacity:1; visibility:visible}
+.menu-card{
+  max-width:380px; width:100%; text-align:center;
+  background:linear-gradient(150deg, var(--card1) 0%, var(--card2) 100%);
+  backdrop-filter:blur(22px) saturate(140%);
+  -webkit-backdrop-filter:blur(22px) saturate(140%);
+  border:1px solid rgba(255,255,255,.55);
+  border-radius:34px; padding:40px 28px 34px;
+  box-shadow:
+    0 22px 0 -4px rgba(7,102,83,.10),
+    0 30px 50px rgba(7,102,83,.35),
+    inset 0 2px 0 rgba(255,255,255,.6),
+    inset 0 -18px 30px rgba(7,102,83,.10);
+
+}
+.menu-badge{
+  width:70px; height:70px; margin:0 auto 18px; border-radius:50%;
+  background:linear-gradient(135deg, var(--hero1), var(--hero2), var(--hero3), var(--hero4));
+  display:flex; align-items:center; justify-content:center;
+  font-size:30px; box-shadow:0 12px 24px rgba(12,52,44,.45), inset 0 2px 0 rgba(255,255,255,.4);
+}
+.menu-title{font-family:'Inter',Arial,sans-serif; font-weight:700; font-size:22px; color:var(--ink); margin:0 0 6px}
+.menu-sub{font-size:13.5px; color:var(--ink-soft); font-weight:600; margin:0 0 26px; line-height:1.5}
+.menu-options{display:flex; flex-direction:column; gap:12px; padding-top:4px}
+.menu-option-wrap{}
+@keyframes menuBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+.menu-option{
+  width:100%; border:none; border-radius:999px; padding:17px 14px;
+  font-family:'Inter',Arial,sans-serif; font-weight:700; font-size:15px; letter-spacing:.3px;
+  cursor:pointer; color:var(--ink);
+  background:linear-gradient(135deg, var(--hero3), var(--hero4));
+  color:#fff;
+  box-shadow:0 10px 0 -3px rgba(7,102,83,.12), 0 14px 24px rgba(12,52,44,.35), inset 0 1px 0 rgba(255,255,255,.4);
+}
+.menu-option:hover{filter:brightness(1.05)}
+.menu-option:active{transform:scale(.97)}
+
+/* ---------- Password lock modal (Fee Receipt / Fee Reminder) ---------- */
+.login-modal{
+  position:fixed; inset:0; z-index:60; display:flex; align-items:center; justify-content:center;
+  padding:20px; background:rgba(6,35,29,.6); backdrop-filter:blur(2px);
+  opacity:0; visibility:hidden;
+}
+.login-modal.show{opacity:1; visibility:visible}
+.login-box{
+  max-width:340px; width:100%; text-align:center;
+  background:linear-gradient(150deg, var(--card1) 0%, var(--card2) 100%);
+  backdrop-filter:blur(22px) saturate(140%);
+  -webkit-backdrop-filter:blur(22px) saturate(140%);
+  border:1px solid rgba(255,255,255,.55);
+  border-radius:30px; padding:32px 24px 26px;
+  box-shadow:0 22px 0 -4px rgba(7,102,83,.10), 0 30px 50px rgba(7,102,83,.35), inset 0 2px 0 rgba(255,255,255,.6);
+
+}
+.login-icon{
+  width:60px; height:60px; margin:0 auto 16px; border-radius:50%;
+  background:linear-gradient(135deg, var(--hero1), var(--hero2), var(--hero3), var(--hero4));
+  display:flex; align-items:center; justify-content:center; font-size:26px;
+  box-shadow:0 12px 24px rgba(12,52,44,.45), inset 0 2px 0 rgba(255,255,255,.4);
+}
+.login-box h3{margin:0 0 6px; font-family:'Inter',Arial,sans-serif; font-weight:700; font-size:19px; color:var(--ink)}
+.login-box p{margin:0 0 18px; font-size:12.5px; color:var(--ink-soft); font-weight:600; line-height:1.5}
+.login-box input{margin-bottom:6px; text-align:center; letter-spacing:4px}
+.login-error{min-height:16px; color:var(--danger); font-size:12px; font-weight:700; margin:6px 0 12px}
+.login-actions{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:10px}
+
+/* ---------- Admission tab specifics ---------- */
+.adm-row3{display:grid; grid-template-columns:2fr 1fr 1fr; gap:8px}
+.adm-row3 .lbl-sm{font-size:10px; color:var(--ink-soft); text-transform:uppercase; letter-spacing:.3px; font-weight:700; margin:0 0 6px; opacity:.75}
+
+/* Hidden designed admission PDF template (screen-only hidden, shown on print) */
+#admpdf-template{display:none}
+#admpdf-page{
+  width:210mm; min-height:297mm; background:#ffffff;
+  font-family:'PT Serif','Georgia','Times New Roman',serif; color:#2b2b2b; position:relative;
+  letter-spacing:normal !important; word-spacing:normal !important; text-align:left;
+}
+#admpdf-page *{letter-spacing:normal !important; word-spacing:normal !important}
+#admpdf-page .admpdf-border-frame{
+  position:absolute; top:8mm; left:8mm; right:8mm; bottom:8mm;
+  border:3px double #0b3d2e; pointer-events:none;
+}
+#admpdf-page .admpdf-border-frame::before{
+  content:""; position:absolute; top:6px; left:6px; right:6px; bottom:6px; border:1px solid #c9a24b;
+}
+#admpdf-page .admpdf-content{position:relative; padding:20mm 17mm 16mm 17mm}
+#admpdf-page .admpdf-header{
+  text-align:center; padding-bottom:12px; border-bottom:3px solid #0b3d2e; margin-bottom:10px;
+}
+#admpdf-page .admpdf-school-name{
+  font-size:29px; letter-spacing:2px; color:#0b3d2e; font-weight:bold; text-transform:uppercase;
+}
+#admpdf-page .admpdf-school-tagline{
+  font-size:11px; color:#7a6a3c; letter-spacing:3px; margin-top:4px; text-transform:uppercase;
+}
+#admpdf-page .admpdf-title{text-align:center; margin:18px 0 22px 0}
+#admpdf-page .admpdf-title span{
+  display:inline-block; background:#062e1a; color:#ffffff; padding:9px 40px;
+  font-size:19px; letter-spacing:3.5px; font-weight:bold; border-radius:3px; text-transform:uppercase;
+}
+#admpdf-page .admpdf-top-row{display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:16px}
+#admpdf-page .admpdf-date-field{font-size:14px; padding-top:4px}
+#admpdf-page .admpdf-date-field .val{display:inline-block; border-bottom:1px dotted #555; min-width:160px; margin-left:6px; padding-bottom:2px}
+#admpdf-page .admpdf-photo-box{display:none}
+#admpdf-page .admpdf-section{margin-bottom:22px}
+#admpdf-page .admpdf-section-title{
+  background:#062e1a; color:#ffffff;
+  padding:7px 14px; font-size:13.5px; letter-spacing:2px; text-transform:uppercase; font-weight:bold;
+  border-radius:3px; margin-bottom:14px;
+  -webkit-print-color-adjust:exact; print-color-adjust:exact;
+}
+#admpdf-page .admpdf-section-title::before{content:"\2756"; margin-right:8px; color:#c9a24b}
+#admpdf-page .admpdf-form-grid{display:grid; grid-template-columns:1fr 1fr; gap:16px 24px; padding:0 6px}
+#admpdf-page .admpdf-field{display:flex; align-items:flex-end; font-size:14px}
+#admpdf-page .admpdf-field .label{white-space:nowrap; font-weight:bold; color:#0b3d2e; margin-right:8px}
+#admpdf-page .admpdf-field .val{flex:1; border-bottom:1px dotted #666; min-height:20px; padding-bottom:2px}
+#admpdf-page .admpdf-field.wide{grid-column:1 / -1}
+#admpdf-page .admpdf-academic-table{width:100%; border-collapse:collapse; font-size:13.5px}
+#admpdf-page .admpdf-academic-table th{
+  text-align:left; padding:9px 12px; background:#062e1a; color:#ffffff; font-weight:bold;
+  text-transform:uppercase; font-size:11px; letter-spacing:.5px;
+  -webkit-print-color-adjust:exact; print-color-adjust:exact;
+}
+#admpdf-page .admpdf-academic-table td{padding:10px 12px; border-bottom:1px solid #ddd}
+#admpdf-page .admpdf-academic-table tr:nth-child(even) td{background:#faf8f2}
+#admpdf-page .admpdf-declaration{
+  margin-top:18px; font-size:12.5px; color:#444; border-top:1px dashed #999; padding-top:14px; line-height:1.8;
+}
+#admpdf-page .admpdf-rules{
+  margin-top:6px;
+}
+#admpdf-page .admpdf-rules-text{
+  direction:rtl; text-align:right;
+  font-family:'Jameel Noori Nastaleeq','Noto Nastaliq Urdu',serif;
+  font-size:15px; line-height:2.3; color:#222;
+}
+#admpdf-page .admpdf-rules-text, #admpdf-page .admpdf-rules-text *{
+  word-spacing:normal !important; letter-spacing:normal !important;
+}
+#admpdf-page .admpdf-rules-text p{margin:0 0 12px 0}
+#admpdf-page .admpdf-rules-text p b{color:#062e1a}
+#admpdf-page .admpdf-signatures{display:flex; justify-content:space-between; margin-top:36px; font-size:13.5px}
+#admpdf-page .admpdf-sign-box{text-align:center; width:40%}
+#admpdf-page .admpdf-sign-line{border-bottom:1px solid #333; height:46px; margin-bottom:7px}
+#admpdf-page .admpdf-footer{
+  margin-top:20px; text-align:center; font-size:10px; color:#8a8a8a;
+  border-top:1px solid #ddd; padding-top:8px; letter-spacing:1px;
+}
+#admpdf-page .admpdf-corner{position:absolute; width:24px; height:24px; border:2px solid #c9a24b}
+#admpdf-page .admpdf-cf-tl{top:10mm; left:10mm; border-right:none; border-bottom:none}
+#admpdf-page .admpdf-cf-tr{top:10mm; right:10mm; border-left:none; border-bottom:none}
+#admpdf-page .admpdf-cf-bl{bottom:10mm; left:10mm; border-right:none; border-top:none}
+#admpdf-page .admpdf-cf-br{bottom:10mm; right:10mm; border-left:none; border-top:none}
+
+/* ---------- Print (Fee Receipt & Admission) ---------- */
+@media print{
+  body{background:#fff !important; padding:0 !important}
+  #welcome,.menu-screen,.tabbar,.footer,.no-print,.login-modal{display:none !important}
+  #tab-attendance,#tab-reminder,#tab-admission,#tab-homework{display:none !important}
+  .container{max-width:none !important}
+  .receipt{box-shadow:none !important; background:#fff !important}
+  @page{size:A5; margin:12mm}
+  *{-webkit-print-color-adjust:exact !important; print-color-adjust:exact !important}
+
+  /* When printing the Admission PDF, hide the app shell entirely
+     and show only the designed A4 admission template */
+  body.printing-admission .container{display:none !important}
+  body.printing-admission #admpdf-template{display:block !important}
+}
+
+/* =====================================================================
+   ONE-PAGE LAYOUT in the style of the reference image
+   ===================================================================== */
+body{background:var(--scene); background-attachment:fixed; color:var(--ink); padding:26px 16px 40px}
+body::before{
+  content:""; position:fixed; left:10px; top:44%; width:72px; height:92px;
+  background-image:radial-gradient(circle,#c3c9d1 1.6px,transparent 1.9px);
+  background-size:14px 14px; opacity:.7; pointer-events:none; z-index:0;
+}
+.container{max-width:560px}
+#appRoot{opacity:1}
+
+/* profile header */
+.profile{position:relative; text-align:center; padding:6px 0 18px}
+.profile::before,.profile::after{content:""; position:absolute; top:48px; width:34px; height:118px; z-index:0}
+.profile::before{left:-16px; background:linear-gradient(160deg,#0f5a73,#0b3f55); border-radius:0 60px 60px 0}
+.profile::after{right:-16px; background:linear-gradient(200deg,#ff8a2a,#ff5e1a); border-radius:60px 0 0 60px}
+.logo{
+  position:relative; z-index:1; width:88px; height:88px; margin:0 auto 12px; border-radius:50%;
+  background:#fff; display:flex; align-items:center; justify-content:center;
+  font-weight:800; font-size:31px; letter-spacing:-1.5px; box-shadow:0 12px 28px rgba(16,40,60,.16);
+}
+.logo .l1{color:#0d5068}
+.logo .l2{color:#ff6a2a}
+.profile-name{position:relative; z-index:1; display:inline-flex; align-items:center; gap:7px; font-size:26px; font-weight:800; letter-spacing:-.3px; color:var(--ink)}
+.verified{flex:none}
+#welcomeGreeting{position:relative; z-index:1; margin:8px 0 0; color:var(--orange-ink); font-size:12px; letter-spacing:.6px; animation:none}
+.profile-tag{position:relative; z-index:1; margin:6px 0 0; font-size:15px; line-height:1.5; font-weight:600; color:var(--ink-soft)}
+
+/* tiles */
+.tiles{display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:18px}
+.tile{
+  position:relative; text-align:left; border:none; cursor:pointer; font-family:inherit;
+  border-radius:22px; padding:16px; min-height:112px;
+  display:flex; flex-direction:column; align-items:flex-start; gap:14px;
+  color:#fff; box-shadow:var(--tile-shadow), inset 0 1px 0 rgba(255,255,255,.22);
+}
+.tile.wide{grid-column:1 / -1; flex-direction:row; align-items:center; min-height:auto; gap:14px; padding:14px 16px}
+.tile:active{transform:scale(.98)}
+.tile-ico{
+  flex:none; width:46px; height:46px; border-radius:15px; background:#fff;
+  display:flex; align-items:center; justify-content:center; font-size:23px;
+  box-shadow:0 6px 14px rgba(16,40,60,.14);
+}
+.tile-txt{display:flex; flex-direction:column; gap:2px; margin-top:auto}
+.tile.wide .tile-txt{margin-top:0}
+.tile-txt b{font-size:15.5px; font-weight:800; letter-spacing:-.1px}
+.tile-txt small{font-size:12.5px; font-weight:600; opacity:.85}
+.tile-chev{position:absolute; top:16px; right:16px; font-size:24px; line-height:1; font-weight:600; opacity:.9}
+.tile.wide .tile-chev{position:static; margin-left:auto}
+.tile-orange{background:var(--orange)}
+.tile-teal{background:var(--teal)}
+.tile-deep{background:var(--deep)}
+.tile-light{background:#fff; color:var(--ink); box-shadow:0 10px 24px rgba(16,40,60,.10)}
+.tile-light .tile-ico{background:#f3f4f6; box-shadow:none}
+.tile-light .tile-chev{color:var(--ink-soft)}
+.tile.active{box-shadow:0 0 0 3px #fff, 0 0 0 6px rgba(255,138,42,.6), var(--tile-shadow)}
+.tile.active .tile-chev{transform:rotate(90deg)}
+
+.tab-panel.active{animation:none}
+
+/* promo banner */
+.promo{
+  position:relative; overflow:hidden; margin-top:6px; padding:20px; border-radius:24px; color:#fff;
+  background:var(--deep); box-shadow:var(--tile-shadow); display:flex; gap:12px; align-items:center;
+}
+.promo-txt{position:relative; z-index:1; flex:1; min-width:0}
+.promo-label{display:block; color:#ff8a4c; font-weight:800; font-size:13.5px; margin-bottom:6px}
+.promo h3{margin:0 0 6px; font-size:19px; line-height:1.25; font-weight:800; letter-spacing:-.2px}
+.promo p{margin:0 0 14px; font-size:13px; font-weight:600; color:rgba(255,255,255,.78)}
+.promo-btn{
+  border:none; cursor:pointer; font-family:inherit; font-weight:700; font-size:13.5px;
+  background:#fff; color:var(--ink); padding:11px 18px; border-radius:999px;
+  box-shadow:0 8px 16px rgba(0,0,0,.2);
+}
+.promo-btn:active{transform:scale(.97)}
+.promo-book{
+  flex:none; width:82px; height:106px; border-radius:8px 12px 12px 8px; padding:14px 8px 8px 16px;
+  background:linear-gradient(135deg,#123f52,#0a2a3a); border-left:8px solid #ff5e1a;
+  box-shadow:0 12px 22px rgba(0,0,0,.35); display:flex; flex-direction:column; gap:2px; transform:rotate(4deg);
+}
+.promo-book b{font-size:22px; font-weight:800; letter-spacing:-1px; color:#fff}
+.promo-book i{font-style:normal; font-size:11px; font-weight:700; color:#ff9a6a}
+.pagefoot{text-align:center; margin:18px 0 0; font-size:12px; font-weight:600; color:rgba(20,32,43,.5)}
+
+/* cards */
+.card{
+  background:#fff; backdrop-filter:none; -webkit-backdrop-filter:none;
+  border:1px solid rgba(255,255,255,.9); border-radius:26px; box-shadow:var(--card-shadow);
+}
+h1,.panel-title{font-weight:800; letter-spacing:-.2px}
+.subtitle{background:var(--teal); color:#fff; letter-spacing:.3px; box-shadow:0 8px 16px rgba(13,80,104,.28), inset 0 1px 0 rgba(255,255,255,.3)}
+.panel-desc,.hint{color:var(--ink-soft)}
+label,.lbl{color:var(--ink-soft); opacity:1}
+.section-title{color:var(--orange-ink); border-left-color:#ff8a2a}
+.count-badge{background:var(--teal); box-shadow:0 4px 10px rgba(13,80,104,.28)}
+
+/* inputs */
+input,textarea{
+  background:var(--pill); border:1px solid var(--pill-border); color:var(--ink);
+  backdrop-filter:none; -webkit-backdrop-filter:none; box-shadow:inset 0 1px 3px rgba(16,40,60,.06);
+}
+input[type="text"],input[type="tel"],input[type="date"],input[type="number"]{border-radius:16px}
+textarea{border-radius:16px}
+input::placeholder,textarea::placeholder{color:rgba(20,32,43,.38)}
+input:focus,textarea:focus{background:#fff; border-color:#ffb27a; box-shadow:0 0 0 3px rgba(255,138,42,.28)}
+#att-className{
+  background:#f3f4f6 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2314202b' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E") no-repeat right 16px center/14px;
+  border-radius:16px; backdrop-filter:none; -webkit-backdrop-filter:none; box-shadow:inset 0 1px 3px rgba(16,40,60,.06);
+}
+#att-className:focus{background-color:#fff; box-shadow:0 0 0 3px rgba(255,138,42,.28)}
+
+/* buttons */
+.btn{border-radius:18px; font-weight:700}
+.btn-primary{background:var(--orange); color:#fff; box-shadow:0 12px 24px rgba(255,116,27,.32), inset 0 1px 0 rgba(255,255,255,.35)}
+.btn-wa{box-shadow:0 12px 24px rgba(23,138,76,.30), inset 0 1px 0 rgba(255,255,255,.3)}
+.btn-soft{background:#fff; color:var(--ink); border:1px solid #e6e9ed; box-shadow:0 8px 18px rgba(16,40,60,.08)}
+.btn-soft:hover{background:#f6f7f9}
+.stamp{border-radius:18px}
+.stamp.female{background:var(--orange); box-shadow:0 12px 24px rgba(255,116,27,.32), inset 0 1px 0 rgba(255,255,255,.35)}
+.stamp.male{background:var(--teal); box-shadow:0 12px 24px rgba(13,80,104,.32), inset 0 1px 0 rgba(255,255,255,.3)}
+
+/* attendance */
+.list-panel{background:#f5f6f8; border-radius:20px; box-shadow:inset 0 1px 4px rgba(16,40,60,.06)}
+.list-panel::before{background:rgba(16,40,60,.10); box-shadow:none}
+.add{background:#fff3e8; color:var(--orange-ink); border-radius:16px; box-shadow:inset 0 0 0 1px rgba(255,138,42,.25)}
+.add:hover{background:#ffe9d6}
+.roll-no{background:var(--teal); box-shadow:0 4px 8px rgba(13,80,104,.28), inset 0 1px 0 rgba(255,255,255,.4)}
+#att-absentList .roll-no{background:linear-gradient(140deg,#ff8a4c,var(--absent-dot))}
+#att-leaveList .roll-no{background:linear-gradient(140deg,#ffcb7a,var(--leave-dot))}
+.remove{background:var(--orange); box-shadow:0 4px 8px rgba(255,116,27,.30)}
+.clock-face{background:#fff; border-color:#0e5a73; box-shadow:0 10px 22px rgba(16,40,60,.14)}
+
+/* fee receipt / reminder */
+.check-row{background:var(--pill); border-radius:16px; box-shadow:inset 0 1px 3px rgba(16,40,60,.06)}
+.check-row.on{background:#fff; box-shadow:0 0 0 2px rgba(255,138,42,.45)}
+.check-row input[type="checkbox"]{accent-color:#ff7a1a}
+.fee-dropdown-trigger{background:var(--pill); border-radius:16px; box-shadow:inset 0 1px 3px rgba(16,40,60,.06)}
+.fee-dropdown-panel{background:#f5f6f8; border-radius:18px; box-shadow:inset 0 1px 4px rgba(16,40,60,.06)}
+.total-box,.total-payable{background:var(--pill); border-radius:16px; box-shadow:none}
+.total-box .amount,.total-payable strong{color:var(--orange-ink)}
+.receipt{background:#f6f7f9; border:1px solid #eceef1; box-shadow:none}
+.grand-total{background:#fff}
+.fm-preview{background:#f5f6f8; border-radius:18px}
+.fm-preview h3{color:var(--orange-ink)}
+#preview{background:#f5f6f8; box-shadow:none}
+
+/* password modal */
+.login-box{
+  background:#fff; backdrop-filter:none; -webkit-backdrop-filter:none; border:1px solid rgba(255,255,255,.9);
+  border-radius:28px; box-shadow:0 26px 54px rgba(16,40,60,.20), 0 2px 8px rgba(16,40,60,.06);
+}
+.login-icon{background:#fff; box-shadow:0 12px 26px rgba(16,40,60,.16), 0 0 0 4px #fff3e8}
+.login-modal{background:rgba(20,32,43,.45); backdrop-filter:blur(3px)}
+
+@media(max-width:430px){
+  body::before{display:none}
+  .profile::before,.profile::after{width:26px; top:44px; height:104px}
+}
+@media print{
+  body::before{display:none}
+  .profile,.tiles,.promo,.pagefoot{display:none !important}
+}
+
+/* ---- two views: buttons page / section page ---- */
+.backbar{display:none; position:sticky; top:0; z-index:5; padding:0 0 14px}
+.view-section .backbar{display:block}
+.backbtn{
+  border:none; cursor:pointer; font-family:inherit; font-weight:700; font-size:14.5px; color:var(--ink);
+  background:#fff; padding:11px 18px 11px 14px; border-radius:999px;
+  display:inline-flex; align-items:center; gap:6px; box-shadow:0 8px 20px rgba(16,40,60,.14);
+}
+.backbtn span{font-size:22px; line-height:1; margin-top:-2px}
+.backbtn:active{transform:scale(.97)}
+.view-home .tab-panel{display:none !important}
+.view-section .profile,.view-section .tiles,.view-section .pagefoot{display:none}
+@media print{ .backbar{display:none !important} }
+
+/* =====================================================================
+   WELCOME SPLASH + LIVING BACKGROUND
+   ===================================================================== */
+body{background:linear-gradient(160deg,#f8f9fa 0%,#eceff2 60%,#e3e7eb 100%); background-attachment:fixed}
+body::before{display:none !important}
+body.splash-on{overflow:hidden}
+.container{position:relative; z-index:1}
+
+.bg-anim{position:fixed; inset:0; overflow:hidden; pointer-events:none; z-index:0}
+.blob{position:absolute; display:block; will-change:transform}
+
+/* page background shapes */
+.page-bg .b1{width:170px; height:170px; border-radius:50%; right:-62px; top:52%;
+  background:radial-gradient(circle at 35% 30%,#ff8a2a,#ff5e1a); animation:float1 9s ease-in-out infinite}
+.page-bg .b2{width:270px; height:270px; border-radius:50%; left:-96px; bottom:-96px;
+  background:linear-gradient(150deg,#0f5a73,#0b3f55); animation:float2 13s ease-in-out infinite}
+.page-bg .b3{width:220px; height:220px; border-radius:56px; left:-84px; top:12%;
+  background:rgba(205,210,217,.45); animation:spin 30s linear infinite}
+.page-bg .b4{width:320px; height:320px; border-radius:50%; right:-110px; top:-110px;
+  background:radial-gradient(circle,rgba(255,255,255,.95),rgba(255,255,255,0) 70%); animation:float3 16s ease-in-out infinite}
+.page-bg .b5{width:46px; height:46px; border-radius:50%; right:16%; top:15%;
+  background:linear-gradient(140deg,#1f7591,#0d5068); animation:bob 6s ease-in-out infinite}
+.page-bg .b6{width:26px; height:26px; border-radius:50%; left:11%; top:64%;
+  background:linear-gradient(140deg,#ffa04a,#ff6a1f); animation:bob 7.5s ease-in-out -2s infinite}
+.page-bg .b7{left:22px; top:44%; width:72px; height:92px; opacity:.7;
+  background-image:radial-gradient(circle,#c3c9d1 1.6px,transparent 1.9px); background-size:14px 14px;
+  animation:drift 14s ease-in-out infinite}
+.page-bg .b8{width:92px; height:92px; border-radius:50%; left:58%; bottom:11%;
+  border:14px solid rgba(255,138,42,.32); animation:float2 11s ease-in-out -3s infinite}
+
+@keyframes float1{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(-30px,-40px) scale(1.08)}}
+@keyframes float2{0%,100%{transform:translate(0,0) rotate(0deg) scale(1)}50%{transform:translate(34px,-28px) rotate(12deg) scale(1.05)}}
+@keyframes float3{0%,100%{transform:translate(0,0)}33%{transform:translate(-26px,20px)}66%{transform:translate(20px,32px)}}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-24px)}}
+@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+@keyframes drift{0%,100%{transform:translate(0,0)}50%{transform:translate(28px,-20px)}}
+
+/* splash */
+#splash{
+  position:fixed; inset:0; z-index:300; display:flex; align-items:center; justify-content:center;
+  background:linear-gradient(165deg,#0f4a60 0%,#0a3547 55%,#082c3d 100%);
+  border-radius:0 0 46px 46px; overflow:hidden;
+  transition:transform .95s cubic-bezier(.77,0,.18,1);
+  box-shadow:0 20px 50px rgba(8,44,61,.35);
+}
+#splash.leave{transform:translateY(-104%)}
+.splash-bg .s1{width:230px; height:230px; border-radius:50%; right:-80px; top:10%;
+  background:radial-gradient(circle at 35% 30%,#ff8a2a,#ff5e1a); animation:float1 8s ease-in-out infinite}
+.splash-bg .s2{width:320px; height:320px; border-radius:50%; left:-130px; bottom:-110px;
+  background:rgba(31,117,145,.5); animation:float2 12s ease-in-out infinite}
+.splash-bg .s3{width:130px; height:130px; border-radius:50%; left:60%; top:64%;
+  border:16px solid rgba(255,255,255,.10); animation:float3 10s ease-in-out infinite}
+.splash-bg .s4{width:40px; height:40px; border-radius:50%; left:14%; top:18%;
+  background:linear-gradient(140deg,#ffa04a,#ff6a1f); animation:bob 6s ease-in-out infinite}
+.splash-bg .s5{width:26px; height:26px; border-radius:50%; right:20%; bottom:18%;
+  background:rgba(255,255,255,.28); animation:bob 7s ease-in-out -2s infinite}
+.splash-bg .s6{right:22px; top:34%; width:72px; height:92px; opacity:.5;
+  background-image:radial-gradient(circle,rgba(255,255,255,.55) 1.6px,transparent 1.9px); background-size:14px 14px;
+  animation:drift 13s ease-in-out infinite}
+.splash-inner{position:relative; z-index:1; text-align:center; padding:24px; color:#fff}
+.splash-logo{margin:0 auto 22px; width:108px; height:108px; font-size:38px; animation:popIn .8s cubic-bezier(.2,1.2,.3,1) .1s both}
+.splash-hello{color:#ff9a6a; font-weight:800; font-size:13px; letter-spacing:1.6px; text-transform:uppercase; animation:fadeUp .7s ease .5s both}
+.splash-title{margin-top:8px; font-size:34px; font-weight:800; letter-spacing:-.5px; animation:fadeUp .7s ease .7s both}
+.splash-sub{margin-top:8px; font-size:15px; font-weight:600; color:rgba(255,255,255,.78); animation:fadeUp .7s ease .9s both}
+.splash-bar{width:120px; height:5px; border-radius:99px; background:rgba(255,255,255,.18); margin:34px auto 0; overflow:hidden; animation:fadeUp .7s ease 1.1s both}
+.splash-bar i{display:block; height:100%; border-radius:99px; background:linear-gradient(90deg,#ff9a3c,#ff5e1a); transform-origin:left; transform:scaleX(0); animation:fillBar 2.7s linear .3s forwards}
+@keyframes popIn{from{opacity:0; transform:scale(.55)}to{opacity:1; transform:scale(1)}}
+@keyframes fadeUp{from{opacity:0; transform:translateY(18px)}to{opacity:1; transform:translateY(0)}}
+@keyframes fillBar{to{transform:scaleX(1)}}
+
+/* first page reveal after the splash slides away */
+body:not(.revealed) .profile,
+body:not(.revealed) .tile,
+body:not(.revealed) .pagefoot{opacity:0}
+body.revealed:not(.intro-done) .profile{animation:riseIn .8s cubic-bezier(.2,.8,.2,1) .35s backwards}
+body.revealed:not(.intro-done) .tile:nth-child(1){animation:riseIn .8s cubic-bezier(.2,.8,.2,1) .5s backwards}
+body.revealed:not(.intro-done) .tile:nth-child(2){animation:riseIn .8s cubic-bezier(.2,.8,.2,1) .62s backwards}
+body.revealed:not(.intro-done) .tile:nth-child(3){animation:riseIn .8s cubic-bezier(.2,.8,.2,1) .74s backwards}
+body.revealed:not(.intro-done) .tile:nth-child(4){animation:riseIn .8s cubic-bezier(.2,.8,.2,1) .86s backwards}
+body.revealed:not(.intro-done) .pagefoot{animation:riseIn .8s ease 1s backwards}
+@keyframes riseIn{from{opacity:0; transform:translateY(34px)}to{opacity:1; transform:translateY(0)}}
+
+@media (prefers-reduced-motion:reduce){
+  .blob,.splash-logo,.splash-hello,.splash-title,.splash-sub,.splash-bar,.splash-bar i{animation:none !important}
+  .splash-bar i{transform:scaleX(1)}
+  #splash{transition-duration:.01s}
+}
+@media print{ #splash,.bg-anim{display:none !important} }
+
+/* removed from the home page: side leaf shapes, small teal circle, big teal circle */
+.profile::before,.profile::after{display:none !important}
+
+/* header in a card, no logo */
+.profile::before{
+  display:block !important; content:""; position:absolute; top:0; left:26px; right:26px; width:auto; height:5px; z-index:1;
+  border-radius:0 0 8px 8px; background:linear-gradient(90deg,#ff8a2a 0%,#ff5e1a 45%,#1f7591 55%,#0d5068 100%);
+}
+.profile{
+  background:#fff; border:1px solid rgba(255,255,255,.9); border-radius:28px;
+  padding:30px 20px 26px; margin-bottom:16px;
+  box-shadow:0 18px 40px rgba(16,40,60,.12), 0 2px 6px rgba(16,40,60,.05);
+}
+.profile-name{font-size:28px}
+.profile-tag{margin-top:8px}
+/* moving grey shape now lives at the bottom-right */
+.page-bg .b3{left:auto; top:auto; right:-90px; bottom:-72px}
+
+/* header logo back */
+.profile .logo{margin:0 auto 14px}
+/* welcome splash: real full screen, no rounded edge */
+#splash{
+  top:0; left:0; right:0; bottom:0; width:100vw; height:100vh; height:100dvh; min-height:100%;
+  border-radius:0; box-shadow:none;
+}
+#splash.leave{transform:translateY(-101%)}
+
+/* header box: orange border with a light that runs around it (top bar removed) */
+@property --a{syntax:"<angle>"; inherits:false; initial-value:0deg}
+.profile::before{display:none !important}
+.profile{border:3px solid rgba(255,138,42,.35)}
+.profile::after{
+  display:block !important; content:""; position:absolute; inset:-3px; width:auto; height:auto; top:-3px; right:-3px;
+  border-radius:28px; padding:3px; pointer-events:none; z-index:2; background-color:transparent;
+  background-image:conic-gradient(from var(--a), rgba(255,138,42,0) 0deg 240deg, #ffb27a 300deg, #ff5e1a 340deg, #ff8a2a 352deg, rgba(255,138,42,0) 360deg);
+  -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite:xor; mask:linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+  animation:borderRun 3.2s linear infinite;
+}
+@keyframes borderRun{to{--a:360deg}}
+@media (prefers-reduced-motion:reduce){ .profile::after{animation:none} }
+
+/* PPS TOOLS: letters reveal one after another, once (no fade out) */
+.profile-name{gap:0}
+.profile-name .ch{display:inline-block; opacity:0}
+.profile-name .gap{width:.32em}
+.profile-name .verified{margin-left:8px}
+body.revealed .profile-name .ch{animation:letterReveal .6s ease-out both; animation-delay:calc(var(--i) * .12s + .7s)}
+body.intro-done .profile-name .ch{animation:none; opacity:1; transform:none}
+@keyframes letterReveal{
+  from{opacity:0; transform:translateY(10px)}
+  to{opacity:1; transform:translateY(0)}
+}
+@media (prefers-reduced-motion:reduce){ body .profile-name .ch{animation:none; opacity:1} }
+
+/* header border: teal, no movement */
+.profile{border:3px solid #1f7591}
+.profile::after{display:none !important; animation:none !important}
+
+
+/* PPS TOOLS ✓ reveals as one piece, once */
+.profile-name .ch,
+body.revealed .profile-name .ch,
+body.intro-done .profile-name .ch{animation:none !important; opacity:1 !important; transform:none !important}
+.profile-name{opacity:0}
+body.revealed .profile-name{animation:titleReveal .9s cubic-bezier(.2,.8,.2,1) .7s both}
+body.intro-done .profile-name{animation:none; opacity:1; transform:none}
+@keyframes titleReveal{from{opacity:0; transform:translateY(14px) scale(.96)} to{opacity:1; transform:translateY(0) scale(1)}}
+@media (prefers-reduced-motion:reduce){ body .profile-name{animation:none; opacity:1} }
+
+/* =====================================================================
+   HOMEWORK CHECK — original Homework design (teal / sun / coral),
+   scoped to #tab-homework so nothing else in the app changes
+   ===================================================================== */
+body.revealed:not(.intro-done) .tile:nth-child(5){animation:riseIn .8s cubic-bezier(.2,.8,.2,1) .98s backwards}
+
+/* page look while the Homework page is open */
+body.view-hw{background:linear-gradient(160deg,#eaf5f4 0%,#f4fbf9 50%,#fff6e2 100%); background-attachment:fixed}
+body.view-hw .page-bg{display:none}
+.hw-bg{display:none; position:fixed; inset:0; z-index:0; overflow:hidden; pointer-events:none}
+body.view-hw .hw-bg{display:block}
+.hw-blob{position:absolute; border-radius:50%; filter:blur(46px); opacity:.55; will-change:transform}
+.hw-blob.hb1{width:340px; height:340px; background:#19a7a0; left:-120px; top:-60px; animation:hwDrift1 22s ease-in-out infinite alternate}
+.hw-blob.hb2{width:300px; height:300px; background:#ffb020; right:-110px; top:26%; animation:hwDrift2 26s ease-in-out infinite alternate}
+.hw-blob.hb3{width:280px; height:280px; background:#ff6b57; left:18%; bottom:-140px; opacity:.32; animation:hwDrift3 30s ease-in-out infinite alternate}
+@keyframes hwDrift1{to{transform:translate(90px,120px) scale(1.15)}}
+@keyframes hwDrift2{to{transform:translate(-100px,-80px) scale(1.2)}}
+@keyframes hwDrift3{to{transform:translate(120px,-90px) scale(1.1)}}
+.hw-doodles{position:absolute; inset:0}
+.hw-doodle{position:absolute; bottom:-60px; font-size:26px; opacity:0; animation:hwFloatUp linear infinite; filter:saturate(1.1)}
+@keyframes hwFloatUp{
+  0%{transform:translateY(0) rotate(0deg); opacity:0}
+  10%{opacity:.35}
+  90%{opacity:.35}
+  100%{transform:translateY(-115vh) rotate(360deg); opacity:0}
+}
+
+#tab-homework{padding-bottom:120px; font-family:'Plus Jakarta Sans',Arial,sans-serif; color:#0d2b31}
+
+/* hero */
+.hw-hero{
+  position:relative; overflow:hidden; border-radius:30px; padding:22px 20px 20px; color:#fff; margin-bottom:14px;
+  background:linear-gradient(135deg,#0a4a54 0%,#06333b 100%); box-shadow:0 18px 44px rgba(6,51,59,.30);
+  animation:hwHeroIn .7s cubic-bezier(.2,.8,.2,1) both;
+}
+@keyframes hwHeroIn{from{opacity:0; transform:translateY(-14px)}to{opacity:1; transform:none}}
+.hw-hero::before,.hw-hero::after{content:""; position:absolute; border-radius:50%; pointer-events:none}
+.hw-hero::before{width:210px; height:210px; right:-70px; top:-90px; background:radial-gradient(circle,#ffb020,rgba(255,176,32,0) 70%); opacity:.9}
+.hw-hero::after{width:200px; height:200px; left:-80px; bottom:-110px; background:radial-gradient(circle,#19a7a0,rgba(25,167,160,0) 70%); opacity:.8}
+.hw-hero-row{position:relative; z-index:2; display:flex; align-items:center; gap:14px}
+.hw-logo{
+  flex:0 0 54px; width:54px; height:54px; border-radius:17px; display:grid; place-items:center; font-size:27px;
+  background:linear-gradient(135deg,#ffb020,#ff8a3d); box-shadow:0 8px 20px rgba(255,176,32,.35); transform:rotate(-6deg);
+}
+#tab-homework .hw-hero h1{
+  margin:0; font-family:'Baloo 2',sans-serif; font-size:clamp(26px,6.5vw,34px); line-height:1; font-weight:800;
+  letter-spacing:.2px; color:#fff; text-transform:none;
+}
+.hw-sub{margin:5px 0 0; font-size:12.5px; color:#bfe3e3; font-weight:500}
+.hw-hero-meta{position:relative; z-index:2; margin-top:16px; display:flex; gap:8px; flex-wrap:wrap}
+.hw-pill{
+  display:inline-flex; align-items:center; gap:6px; padding:7px 12px; border-radius:999px; font-size:12px; font-weight:600; color:#fff;
+  background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.18); backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px);
+}
+
+/* glass cards */
+.hw-card{
+  background:rgba(255,255,255,.88); border:1px solid rgba(255,255,255,.9); border-radius:22px; padding:16px; margin-bottom:14px;
+  box-shadow:0 14px 40px rgba(10,74,84,.12); backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
+}
+.hw-card-title{
+  display:flex; align-items:center; gap:9px; margin:0 2px 13px; font-family:'Baloo 2',sans-serif; font-size:19px; font-weight:700; color:#0a4a54;
+}
+.hw-dot{width:9px; height:9px; border-radius:50%; background:#ffb020; box-shadow:0 0 0 4px #fff3d6}
+
+.hw-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:11px}
+.hw-grid .hw-full{grid-column:1 / -1}
+#tab-homework label.hw-lab{display:block; margin:0 0 6px 3px; font-size:12px; font-weight:700; color:#5f7a80; text-transform:none; letter-spacing:0; opacity:1}
+
+#tab-homework input[type="text"],#tab-homework input[type="date"],#tab-homework select{
+  width:100%; min-height:50px; padding:11px 14px; border:1.5px solid #d6e6e5; border-radius:15px; outline:none; background:#fff; color:#0d2b31;
+  font-family:inherit; font-size:14.5px; font-weight:500; box-shadow:none; backdrop-filter:none; -webkit-backdrop-filter:none;
+  transition:border-color .2s, box-shadow .2s, background .2s;
+}
+#tab-homework input::placeholder{color:#9db1b5; font-weight:500}
+#tab-homework select{
+  -webkit-appearance:none; appearance:none; padding-right:42px; cursor:pointer;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='9' viewBox='0 0 14 9'%3E%3Cpath d='M1 1.5l6 6 6-6' fill='none' stroke='%230a4a54' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat:no-repeat; background-position:right 15px center; background-size:14px 9px;
+}
+#tab-homework select:invalid{color:#9db1b5}
+#tab-homework select option{color:#0d2b31}
+#tab-homework input[type="text"]:focus,#tab-homework input[type="date"]:focus,#tab-homework select:focus{
+  background-color:#fff; border-color:#19a7a0; box-shadow:0 0 0 4px rgba(25,167,160,.16);
+}
+#tab-homework button:focus-visible,#tab-homework .hw-chip:has(input:focus-visible){outline:3px solid #ffb020; outline-offset:2px}
+#tab-homework .field-ok select,#tab-homework .field-ok input{border-color:#9fdccf}
+
+#hw-otherWrap{display:none; margin-top:-2px}
+#hw-otherWrap.show{display:block; animation:hwPop .25s ease both}
+@keyframes hwPop{from{opacity:0; transform:translateY(-6px)}to{opacity:1; transform:none}}
+
+/* students */
+#hw-students{display:grid; gap:11px; margin-bottom:12px}
+.hw-row{
+  position:relative; border:1.5px solid #d6e6e5; border-left:6px solid #12a36b; border-radius:18px; padding:13px; background:#fff;
+  transition:border-color .25s, background .25s, box-shadow .25s;
+}
+.hw-row.has-issue{
+  border-color:#ffc9c1; border-left-color:#ff6b57; background:linear-gradient(180deg,#fff,#fff8f6); box-shadow:0 8px 22px rgba(255,107,87,.12);
+}
+.hw-row.added{animation:hwPop .3s ease both}
+.hw-top{display:flex; gap:9px; align-items:center; margin-bottom:11px}
+.hw-num{
+  flex:0 0 38px; width:38px; height:38px; border-radius:12px; display:grid; place-items:center;
+  font-family:'Baloo 2',sans-serif; font-weight:700; font-size:16px; color:#0a4a54; background:#e2f5f3; transition:background .25s,color .25s;
+}
+.hw-row.has-issue .hw-num{background:#ff6b57; color:#fff}
+.hw-name{flex:1; min-width:0}
+#tab-homework .hw-name input{min-height:44px; font-weight:600}
+.hw-status{flex:0 0 auto; font-size:11px; font-weight:700; padding:6px 10px; border-radius:999px; color:#0b7a4f; background:#dcf6ea; white-space:nowrap}
+.hw-row.has-issue .hw-status{color:#c53a28; background:#ffe9e5}
+.hw-remove{
+  flex:0 0 auto; width:38px; height:38px; border-radius:12px; border:1px solid #ffd2cc; background:#fff; color:#ff6b57;
+  font-size:17px; font-weight:700; line-height:1; cursor:pointer; padding:0; font-family:inherit; transition:background .2s, transform .15s;
+}
+.hw-remove:hover{background:#ffe9e5}
+.hw-remove:active{transform:scale(.92)}
+.hw-checks{display:grid; grid-template-columns:repeat(4,1fr); gap:8px}
+#tab-homework label.hw-chip{
+  position:relative; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px; margin:0;
+  min-height:62px; padding:8px 6px; text-align:center; text-transform:none; letter-spacing:0; opacity:1; color:#0d2b31;
+  border:1.5px solid #d6e6e5; border-radius:14px; background:#f7fbfb; font-size:11.5px; font-weight:600; line-height:1.2;
+  cursor:pointer; user-select:none; transition:background .18s,border-color .18s,transform .15s,color .18s;
+}
+#tab-homework label.hw-chip .ic{font-size:19px; line-height:1}
+#tab-homework label.hw-chip input{position:absolute; opacity:0; width:0; height:0; padding:0; margin:0; border:0; pointer-events:none; min-height:0}
+#tab-homework label.hw-chip:hover{border-color:#9fd3d0; background:#e2f5f3}
+#tab-homework label.hw-chip:active{transform:scale(.96)}
+#tab-homework label.hw-chip.on{background:#ff6b57; border-color:#ff6b57; color:#fff; box-shadow:0 6px 14px rgba(255,107,87,.30)}
+
+.hw-add{
+  width:100%; min-height:52px; border-radius:16px; border:2px dashed #7fcac5; background:#e2f5f3; color:#0a4a54;
+  font-family:inherit; font-size:14.5px; font-weight:700; cursor:pointer; transition:background .2s, transform .15s;
+}
+.hw-add:hover{background:#d2f0ed}
+.hw-add:active{transform:scale(.98)}
+.hw-hint{text-align:center; font-size:11.5px; color:#5f7a80; margin-top:11px}
+
+/* sticky send bar */
+.hw-sendbar{
+  position:fixed; left:0; right:0; bottom:0; z-index:40;
+  padding:10px 12px calc(10px + env(safe-area-inset-bottom,0px));
+  background:linear-gradient(180deg,rgba(234,245,244,0),rgba(234,245,244,.92) 40%); pointer-events:none;
+}
+.hw-sendbar-inner{
+  pointer-events:auto; width:min(560px,100%); margin:auto; display:flex; align-items:center; gap:12px;
+  padding:10px 10px 10px 16px; border-radius:22px; color:#fff; background:linear-gradient(135deg,#0a4a54,#06333b);
+  box-shadow:0 14px 34px rgba(6,51,59,.35);
+}
+.hw-tally{flex:1; min-width:0}
+.hw-tally b{display:block; font-family:'Baloo 2',sans-serif; font-size:18px; line-height:1.1; font-weight:700}
+.hw-tally span{font-size:11.5px; color:#bfe3e3}
+.hw-send{
+  flex:0 0 auto; min-height:50px; padding:0 20px; border:0; border-radius:16px; font-family:inherit; font-size:14px; font-weight:700;
+  color:#fff; cursor:pointer; background:linear-gradient(135deg,#0f9d58,#22c07a); box-shadow:0 8px 18px rgba(18,163,107,.35); transition:transform .15s;
+}
+.hw-send:active{transform:scale(.96)}
+.hw-toast{
+  position:fixed; left:50%; top:14px; transform:translate(-50%,-110px); z-index:400; max-width:calc(100% - 28px);
+  padding:12px 18px; border-radius:16px; background:#0d2b31; color:#fff; font-size:13.5px; font-weight:600;
+  box-shadow:0 12px 30px rgba(0,0,0,.25); transition:transform .35s cubic-bezier(.2,.8,.2,1);
+}
+.hw-toast.show{transform:translate(-50%,0)}
+
+@media(max-width:520px){
+  .hw-hero{border-radius:26px; padding:19px 16px 17px}
+  .hw-card{padding:13px; border-radius:20px}
+  .hw-checks{grid-template-columns:repeat(2,1fr)}
+  #tab-homework label.hw-chip{flex-direction:row; justify-content:flex-start; gap:8px; min-height:50px; padding:8px 10px; text-align:left}
+  #tab-homework label.hw-chip .ic{font-size:18px}
+  .hw-status{display:none}
+  .hw-send{padding:0 16px; font-size:13px}
+}
+@media(prefers-reduced-motion:reduce){
+  .hw-blob,.hw-doodle,.hw-hero,.hw-row.added,#hw-otherWrap.show{animation:none}
+  .hw-doodle{display:none}
+}
+@media print{ #tab-homework,.hw-sendbar,.hw-toast,.hw-bg{display:none !important} }
+
+/* ---- Homework: send bar sits at the end of the page (no longer floats over the content) ---- */
+#tab-homework{padding-bottom:24px}
+.hw-sendbar{position:static; left:auto; right:auto; bottom:auto; z-index:auto; padding:0; background:none; pointer-events:auto; margin-top:2px}
+.hw-sendbar-inner{width:100%}
+
+/* ---- One title font across the app (the Homework title font, Baloo 2) ---- */
+h1,h2,h3,.panel-title,.profile-name,.section-title,.tile-txt b,.splash-title,.att-lock-title,
+.login-box h3,.fm-preview h3,#tab-attendance h1,#tab-receipt h1,#tab-reminder h1,#tab-admission h1{
+  font-family:'Baloo 2','Inter',Arial,sans-serif;
+}
+h1,.panel-title{font-weight:800; line-height:1.1; letter-spacing:.2px}
+.profile-name{font-weight:800; line-height:1.1; letter-spacing:.2px}
+.tile-txt b{font-weight:700; font-size:15.5px; line-height:1.15; letter-spacing:0; white-space:nowrap}
+.section-title{font-weight:700; letter-spacing:.5px}
+.splash-title{font-weight:800; letter-spacing:0}
+</style>
+</head>
+<body class="view-home splash-on">
+
+<!-- ===== Welcome splash (slides up after 3s) ===== -->
+<div id="splash">
+  <div class="bg-anim splash-bg" aria-hidden="true">
+    <span class="blob s1"></span><span class="blob s2"></span><span class="blob s3"></span>
+    <span class="blob s4"></span><span class="blob s5"></span><span class="blob s6"></span>
+  </div>
+  <div class="splash-inner">
+    <div class="logo splash-logo"><img src="./icons/icon-192.png" alt="PPS" style="width:100%;height:100%;object-fit:cover;border-radius:50%"></div>
+    <div class="splash-hello" id="splashGreeting">Good Morning</div>
+    <div class="splash-title">Welcome, Teacher</div>
+    <div class="splash-sub">Less Paper work, More Teaching.</div>
+    <div class="splash-bar"><i></i></div>
+  </div>
+</div>
+
+<!-- ===== Homework page background (only shown on the Homework page) ===== -->
+<div class="hw-bg" aria-hidden="true">
+  <div class="hw-blob hb1"></div><div class="hw-blob hb2"></div><div class="hw-blob hb3"></div>
+  <div class="hw-doodles" id="hw-doodles"></div>
+</div>
+
+<!-- ===== Moving background ===== -->
+<div class="bg-anim page-bg" aria-hidden="true">
+  <span class="blob b3"></span>
+  
+  
+</div>
+
+<div id="loginModal" class="login-modal">
+  <div class="login-box">
+    <div class="login-icon">🔒</div>
+    <h3>Enter Password</h3>
+    <p>This section is locked. Enter the password to continue.</p>
+    <input type="password" id="loginPassInput" placeholder="Password" autocomplete="off">
+    <div class="login-error" id="loginError"></div>
+    <div class="login-actions">
+      <button class="btn btn-soft" type="button" onclick="closeLoginModal()">Cancel</button>
+      <button class="btn btn-primary" type="button" onclick="submitLoginPass()">Unlock</button>
+    </div>
+  </div>
+</div>
+
+<div id="appRoot">
+<div class="container">
+
+  <header class="profile">
+    <div class="profile-name" aria-label="PPS TOOLS"><span class="ch" style="--i:0" aria-hidden="true">P</span><span class="ch" style="--i:1" aria-hidden="true">P</span><span class="ch" style="--i:2" aria-hidden="true">S</span><span class="ch gap" aria-hidden="true">&nbsp;</span><span class="ch" style="--i:4" aria-hidden="true">T</span><span class="ch" style="--i:5" aria-hidden="true">O</span><span class="ch" style="--i:6" aria-hidden="true">O</span><span class="ch" style="--i:7" aria-hidden="true">L</span><span class="ch" style="--i:8" aria-hidden="true">S</span>
+      <svg class="verified ch" style="--i:9" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><circle cx="12" cy="12" r="11" fill="#ff6a2a"/><path d="M7 12.5l3.2 3.2L17 9" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </div>
+    <span id="welcomeGreeting">Good Morning</span>
+    <p class="profile-tag">Welcome, Teacher.<br>Less Paper work, More Teaching.</p>
+  </header>
+
+  <nav class="tiles" aria-label="Sections">
+    <button class="tile tile-orange wide" type="button" data-tab="attendance" onclick="tryTab('attendance')">
+      <span class="tile-ico">📋</span><span class="tile-txt"><b>Attendance</b><small>Daily class attendance</small></span><span class="tile-chev">›</span>
+    </button>
+    <button class="tile tile-teal" type="button" data-tab="receipt" onclick="tryTab('receipt')">
+      <span class="tile-ico">🧾</span><span class="tile-txt"><b>Fee Receipt</b><small>Print &amp; send receipts</small></span><span class="tile-chev">›</span>
+    </button>
+    <button class="tile tile-deep" type="button" data-tab="reminder" onclick="tryTab('reminder')">
+      <span class="tile-ico">🔔</span><span class="tile-txt"><b>Fee Reminder</b><small>Remind guardians</small></span><span class="tile-chev">›</span>
+    </button>
+    <button class="tile tile-orange" type="button" data-tab="homework" onclick="tryTab('homework')">
+      <span class="tile-ico">📚</span><span class="tile-txt"><b>Homework Check</b><small>Report to Principal</small></span><span class="tile-chev">›</span>
+    </button>
+    <button class="tile tile-light" type="button" data-tab="admission" onclick="tryTab('admission')">
+      <span class="tile-ico">🎓</span><span class="tile-txt"><b>Admission</b><small>Admission form PDF</small></span><span class="tile-chev">›</span>
+    </button>
+  </nav>
+
+
+  <div class="backbar"><button class="backbtn" type="button" onclick="goHome()"><span>‹</span> Home</button></div>
+
+  <!-- ================= ATTENDANCE TAB ================= -->
+  <section id="tab-attendance" class="tab-panel">
+    <div class="card">
+      <div class="head-row">
+        <h1 id="attendanceTitle" aria-label="ATTENDANCE"></h1>
+        <span class="subtitle">PPS DAILY ATTENDANCE</span>
+      </div>
+
+      <div id="att-lockOverlay" class="att-lock" style="display:none;">
+        <div class="live-clock" aria-hidden="true">
+          <div class="clock-face">
+            <div class="clock-hand hour" id="liveClockHour"></div>
+            <div class="clock-hand minute" id="liveClockMinute"></div>
+            <div class="clock-hand second" id="liveClockSecond"></div>
+            <div class="clock-center"></div>
+          </div>
+        </div>
+        <div class="att-lock-title">حاضری کا وقت ختم ہو گیا</div>
+        <div class="att-lock-msg">حاضری صرف دوپہر 1 بجے سے پہلے لگائی جا سکتی ہے۔ اگر ابھی حاضری اپڈیٹ کرنا ضروری ہے تو پاس ورڈ درج کریں۔</div>
+        <div class="att-unlock-row">
+          <input type="password" id="att-latePassInput" placeholder="Password" autocomplete="off">
+          <button class="btn btn-primary" type="button" onclick="attUnlockLate()">Unlock</button>
+        </div>
+        <div class="att-unlock-error" id="att-latePassError"></div>
+      </div>
+
+      <div id="att-fieldsWrap">
+      <label>Attendance Date</label>
+      <input id="att-date" type="text" readonly>
+
+      <label>Class Name</label>
+      <select id="att-className">
+        <option value="" disabled selected>Select class</option>
+        <option value="PG A">PG A</option>
+        <option value="PG B">PG B</option>
+        <option value="NURSERY">NURSERY</option>
+        <option value="KG">KG</option>
+        <option value="1ST">1ST</option>
+        <option value="2ND">2ND</option>
+        <option value="3RD">3RD</option>
+        <option value="4TH">4TH</option>
+        <option value="5TH">5TH</option>
+        <option value="6TH-A">6TH-A</option>
+        <option value="6TH-B">6TH-B</option>
+        <option value="7TH">7TH</option>
+        <option value="8TH-A">8TH-A</option>
+        <option value="8TH-B">8TH-B</option>
+        <option value="9TH">9TH</option>
+        <option value="10TH">10TH</option>
+      </select>
+      <div class="field-error" id="att-classNameError"></div>
+
+      <div class="section-heading">
+        <label>Absent Students</label>
+        <span class="count-badge" id="att-absentCount">0</span>
+      </div>
+      <div class="list-panel"><div id="att-absentList"></div></div>
+      <button class="add" type="button" onclick="attAddStudent('absent')"><span class="plus">+</span> Add absent student</button>
+      <div class="hint">Add one student per field.</div>
+
+      <div class="section-heading">
+        <label>Students on Leave</label>
+        <span class="count-badge" id="att-leaveCount">0</span>
+      </div>
+      <div class="list-panel"><div id="att-leaveList"></div></div>
+      <button class="add" type="button" onclick="attAddStudent('leave')"><span class="plus">+</span> Add student on leave</button>
+      <div class="hint">Add students who are on leave.</div>
+
+      <label>Class Teacher Name</label>
+      <input id="att-master" type="text" placeholder="Enter Class Teacher name" autocomplete="off">
+
+      <div class="att-buttons">
+        <button class="stamp female" type="button" onclick="attSendWhatsApp('03400968477')">FEMALE</button>
+        <button class="stamp male" type="button" onclick="attSendWhatsApp('03099795054')">MALE</button>
+      </div>
+
+      <div id="preview"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= FEE RECEIPT TAB ================= -->
+  <section id="tab-receipt" class="tab-panel">
+    <div class="card no-print">
+      <div class="head-row">
+        <h1 id="receiptTitle" class="panel-title" aria-label="FEE RECEIPT"></h1>
+        <span class="subtitle">PPS FEE RECEIPT</span>
+      </div>
+      <p class="panel-desc">Fill in the details, then print or send straight to WhatsApp.</p>
+    </div>
+
+    <div class="card no-print">
+      <div class="section-title">Student Details</div>
+      <div class="field"><span class="lbl">Date</span><input type="date" id="fr-date"></div>
+      <div class="field"><span class="lbl">Receipt No.</span><input id="fr-receiptNo" placeholder="Optional — for your own records"></div>
+      <div class="field"><span class="lbl">Student name</span><input id="fr-studentName" placeholder="e.g. Ayesha Khan"></div>
+      <div class="field"><span class="lbl">Class</span><input id="fr-studentClass" placeholder="e.g. 6-B"></div>
+    </div>
+
+    <div class="card no-print">
+      <div class="section-title">Fee Details</div>
+      <span class="lbl">Fee types (select as many as apply)</span>
+      <div class="fee-dropdown" id="fr-feeDropdown">
+        <button type="button" class="fee-dropdown-trigger" id="fr-feeDropdownTrigger" onclick="frToggleFeeDropdown()">
+          <span id="fr-feeDropdownLabel">Select fee types</span><span class="chev">▾</span>
+        </button>
+        <div class="fee-dropdown-panel">
+          <div class="check-row" id="fr-row-monthly">
+            <label><input type="checkbox" id="fr-chk-monthly"> Monthly Fee</label>
+            <input class="amt" type="number" placeholder="Rs." id="fr-amt-monthly">
+          </div>
+          <div class="check-row" id="fr-row-admission">
+            <label><input type="checkbox" id="fr-chk-admission"> Admission Fee</label>
+            <input class="amt" type="number" placeholder="Rs." id="fr-amt-admission">
+          </div>
+          <div class="check-row" id="fr-row-promotion">
+            <label><input type="checkbox" id="fr-chk-promotion"> Promotion Fee</label>
+            <input class="amt" type="number" placeholder="Rs." id="fr-amt-promotion">
+          </div>
+          <div class="check-row" id="fr-row-exam">
+            <label><input type="checkbox" id="fr-chk-exam"> Exam Fee</label>
+            <input class="amt" type="number" placeholder="Rs." id="fr-amt-exam">
+          </div>
+        </div>
+      </div>
+      <div class="field" id="fr-periodField" style="margin-top:10px; display:none;">
+        <span class="lbl">Month</span><input id="fr-period" placeholder="e.g. August 2026">
+      </div>
+
+      <div class="field"><span class="lbl">Arrears (بقایا جات)</span><input type="number" placeholder="0" id="fr-arrears"></div>
+
+      <div class="total-box"><span>Total</span><span class="amount" id="fr-formTotal">Rs. 0</span></div>
+    </div>
+
+    <div class="card no-print">
+      <div class="section-title">Contact</div>
+      <div class="field"><span class="lbl">Guardian WhatsApp number</span><input id="fr-guardianPhone" placeholder="03xx-xxxxxxx"></div>
+
+      <div style="display:flex; flex-direction:column; gap:10px; margin-top:18px;">
+        <button class="btn btn-wa" id="fr-btnWhatsapp">WhatsApp</button>
+        <button class="btn btn-primary" id="fr-btnSms">SMS</button>
+      </div>
+      <div class="hint">WhatsApp opens with the receipt pre-filled — you just hit send. No internet? Use SMS — it sends over the SIM card's normal signal.</div>
+    </div>
+
+    <div class="card no-print">
+      <div class="section-title">Income Records</div>
+      <div class="total-box"><span>Saved receipts</span><span class="amount" id="fr-recordCount">0</span></div>
+      <div class="total-box"><span>Total income (excl. arrears)</span><span class="amount" id="fr-recordTotal">Rs. 0</span></div>
+      <button class="btn btn-soft" id="fr-btnConnectDrive" style="margin-bottom:10px;">🔗 Connect Google Account</button>
+      <div class="hint" id="fr-driveStatus" style="margin-bottom:12px;">Not connected — records save locally only.</div>
+      <button class="btn btn-primary" id="fr-btnSaveRecord" style="margin-bottom:10px;">💾 Save this receipt to records</button>
+      <div class="actions-row">
+        <button class="btn btn-soft" id="fr-btnExportPdf">📑 Export income (PDF)</button>
+        <button class="btn btn-soft" id="fr-btnClearRecords">🗑 Clear records</button>
+      </div>
+      <button class="btn btn-soft" id="fr-btnCopyRecords" style="margin-top:10px;">📋 Copy records for Drive backup</button>
+      <div class="hint">Once connected, saving a receipt also appends it to your Google Sheet automatically.</div>
+    </div>
+
+    <div class="card no-print">
+      <div class="section-title">Message</div>
+      <div class="field"><span class="lbl">Message for parents (Urdu)</span><textarea id="fr-message" rows="3"></textarea></div>
+    </div>
+
+    <div class="card">
+      <div class="receipt" id="fr-receiptPreview">
+        <div class="watermark">PPS PPS PPS</div>
+        <div class="receipt-head">
+          <div>
+            <div class="panel-title" style="font-size:20px;">PPS</div>
+            <div class="hint" style="padding-left:0; margin-top:4px;">Fee Payment Receipt</div>
+          </div>
+          <div class="r">
+            <div class="lbl">Receipt No.</div>
+            <div class="receipt-no-blank">&nbsp;</div>
+          </div>
+        </div>
+        <div class="dashed"></div>
+        <div class="grid2">
+          <div><div class="l">Student</div><div class="v" id="fr-p-student">—</div></div>
+          <div><div class="l">Class</div><div class="v" id="fr-p-class">—</div></div>
+          <div><div class="l">Date</div><div class="v" id="fr-p-date">—</div></div>
+        </div>
+        <div style="margin-top:16px;">
+          <div class="fee-list-title">Fee breakdown</div>
+          <div id="fr-p-feeList"></div>
+        </div>
+        <div class="grand-total"><span class="label">Total received</span><span class="amount" id="fr-p-total">Rs. 0</span></div>
+        <div class="arrears-row" id="fr-arrearsRow" style="display:none;">
+          <span class="label">Arrears (بقایا جات)</span><span class="amount" id="fr-p-arrears">Rs. 0</span>
+        </div>
+        <div class="receipt-msg" id="fr-p-message"></div>
+      </div>
+    </div>
+
+    <div class="no-print" style="display:flex; flex-direction:column; gap:10px; margin-top:-4px;">
+      <div class="actions-row">
+        <button class="btn btn-soft" id="fr-btnPrint">🖨 Print receipt</button>
+        <button class="btn btn-soft" id="fr-btnCopy">📋 Copy message</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= FEE REMINDER TAB ================= -->
+  <section id="tab-reminder" class="tab-panel">
+    <div class="card">
+      <div class="head-row">
+        <h1 id="reminderTitle" class="panel-title" aria-label="FEE REMINDER"></h1>
+        <span class="subtitle" id="fm-dateDisplay">FEE REMINDER</span>
+      </div>
+      <p class="panel-desc">Fill in the details, then send the reminder to the guardian.</p>
+    </div>
+
+    <div class="card">
+      <div class="section-title">Student Details</div>
+      <div class="field"><span class="lbl">Student Name</span><input id="fm-student" type="text" autocomplete="off" placeholder="Enter student name"></div>
+      <div class="field"><span class="lbl">Class</span><input id="fm-className" type="text" autocomplete="off" placeholder="Enter class"></div>
+    </div>
+
+    <div class="card">
+      <div class="section-title">Fee Details</div>
+      <div class="field"><span class="lbl">Previous Fee</span><input id="fm-previous" type="number" min="0" inputmode="numeric" placeholder="Enter amount"></div>
+      <div class="field"><span class="lbl">Current Fee</span><input id="fm-current" type="number" min="0" inputmode="numeric" placeholder="Enter amount"></div>
+      <div class="field"><span class="lbl">Promotion Fee</span><input id="fm-promotion" type="number" min="0" inputmode="numeric" placeholder="Enter amount"></div>
+      <div class="field"><span class="lbl">Admission Fee</span><input id="fm-admission" type="number" min="0" inputmode="numeric" placeholder="Enter amount"></div>
+
+      <div class="total-payable"><span>Total Payable</span><strong id="fm-total">Rs. 0</strong></div>
+    </div>
+
+    <div class="card">
+      <div class="section-title">Contact</div>
+      <div class="field"><span class="lbl">WhatsApp / Mobile Number</span><input id="fm-phone" type="tel" inputmode="tel" autocomplete="off" placeholder="03XXXXXXXXX"></div>
+
+      <div class="fm-buttons">
+        <button class="btn btn-wa" onclick="fmSendWhatsApp()">WhatsApp</button>
+        <button class="btn btn-primary" onclick="fmSendSMS()">SMS</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="section-title">Message</div>
+      <div class="fm-buttons" style="margin-top:0;">
+        <button class="btn btn-soft" onclick="fmTogglePreview()">Preview Message</button>
+        <button class="btn btn-soft" onclick="fmResetForm()">Clear / Reset</button>
+      </div>
+
+      <div class="fm-preview" id="fm-previewBox">
+        <h3>Message Preview</h3>
+        <div class="fm-preview-type">WhatsApp format — bold text included</div>
+        <div class="fm-preview-text" id="fm-previewText"></div>
+        <button class="btn btn-primary" style="margin-top:12px;" onclick="fmCopyMessage()">Copy Message</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= HOMEWORK CHECK TAB ================= -->
+  <section id="tab-homework" class="tab-panel">
+
+    <header class="hw-hero">
+      <div class="hw-hero-row">
+        <div class="hw-logo">📚</div>
+        <div>
+          <h1>Homework Check</h1>
+          <p class="hw-sub">Daily homework &amp; material report</p>
+        </div>
+      </div>
+      <div class="hw-hero-meta">
+        <span class="hw-pill" id="hw-greet">👋 Hello</span>
+        <span class="hw-pill" id="hw-datepill">📅 —</span>
+        <span class="hw-pill" id="hw-clock">🕒 —</span>
+      </div>
+    </header>
+
+    <section class="hw-card">
+      <h2 class="hw-card-title"><span class="hw-dot"></span>Class details</h2>
+      <div class="hw-grid">
+        <div id="hw-classField">
+          <label class="hw-lab" for="hw-class">Class</label>
+          <select id="hw-class" required>
+            <option value="" selected disabled>Select class</option>
+            <option>Play Group A</option>
+            <option>Play Group B</option>
+            <option>Nursery</option>
+            <option>Kindergarten</option>
+            <option>1st</option>
+            <option>2nd</option>
+            <option>3rd</option>
+            <option>4th</option>
+            <option>5th</option>
+            <option>6th-A</option>
+            <option>6th-B</option>
+            <option>7th</option>
+            <option>8th-A</option>
+            <option>8th-B</option>
+            <option>9th</option>
+            <option>10th</option>
+          </select>
+        </div>
+
+        <div id="hw-subjectField">
+          <label class="hw-lab" for="hw-subject">Subject</label>
+          <select id="hw-subject" required>
+            <option value="" selected disabled>Select subject</option>
+            <option>English</option>
+            <option>Urdu</option>
+            <option>Mathematics</option>
+            <option>Science</option>
+            <option>Islamiyat</option>
+            <option>Social Studies</option>
+            <option>General Knowledge</option>
+            <option>Computer</option>
+            <option>Physics</option>
+            <option>Chemistry</option>
+            <option>Biology</option>
+            <option>Drawing</option>
+            <option value="__other">Other…</option>
+          </select>
+        </div>
+
+        <div class="hw-full" id="hw-otherWrap">
+          <input type="text" id="hw-other" placeholder="Write subject name" autocomplete="off">
+        </div>
+
+        <div>
+          <label class="hw-lab" for="hw-teacher">Teacher name</label>
+          <input type="text" id="hw-teacher" placeholder="Teacher name" autocomplete="name">
+        </div>
+
+        <div>
+          <label class="hw-lab" for="hw-date">Date</label>
+          <input type="date" id="hw-date">
+        </div>
+      </div>
+    </section>
+
+    <section class="hw-card">
+      <h2 class="hw-card-title"><span class="hw-dot"></span>Students report</h2>
+      <div id="hw-students"></div>
+      <button class="hw-add" type="button" onclick="hwAddStudent()">＋ Add student</button>
+      <div class="hw-hint">Only students with a problem appear in the report.</div>
+    </section>
+
+    <div class="hw-sendbar">
+      <div class="hw-sendbar-inner">
+        <div class="hw-tally"><b id="hw-tallyMain">0 students flagged</b><span id="hw-tallySub">0 students added</span></div>
+        <button class="hw-send" type="button" onclick="hwSend()">📱 Send to Principal</button>
+      </div>
+    </div>
+    <div class="hw-toast" id="hw-toast" role="status" aria-live="polite"></div>
+  </section>
+
+  <!-- ================= ADMISSION TAB ================= -->
+  <section id="tab-admission" class="tab-panel">
+    <div class="card no-print">
+      <div class="head-row">
+        <h1 id="admissionTitle" class="panel-title" aria-label="ADMISSION"></h1>
+        <span class="subtitle">PPS ADMISSION FORM</span>
+      </div>
+      <p class="panel-desc">Fill in the student's details, then generate the designed admission PDF.</p>
+    </div>
+
+    <div class="card no-print">
+      <div class="section-title">Student Information</div>
+      <div class="field"><span class="lbl">Date</span><input type="date" id="ad-date" placeholder="Admission date"></div>
+      <div class="field"><span class="lbl">Name</span><input type="text" id="ad-name" placeholder="Student's full name"></div>
+      <div class="actions-row">
+        <div class="field"><span class="lbl">Date of Birth</span><input type="date" id="ad-dob" placeholder="Date of birth"></div>
+        <div class="field">
+          <span class="lbl">Gender</span>
+          <select id="ad-gender">
+            <option value="" disabled selected>Select</option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+      </div>
+      <div class="field"><span class="lbl">Address</span><input type="text" id="ad-address" placeholder="Home address"></div>
+    </div>
+
+    <div class="card no-print">
+      <div class="section-title">Parents Information</div>
+      <div class="actions-row">
+        <div class="field"><span class="lbl">Father Name</span><input type="text" id="ad-father" placeholder="Father's name"></div>
+        <div class="field"><span class="lbl">Contact</span><input type="tel" id="ad-contact" placeholder="Contact number"></div>
+      </div>
+    </div>
+
+    <div class="card no-print">
+      <div class="section-title">Previous Academic Records</div>
+      <div class="adm-row3">
+        <div><p class="lbl-sm">School Name</p><input type="text" id="ad-school1" placeholder="e.g. ABC Public School"></div>
+        <div><p class="lbl-sm">Class</p><input type="text" id="ad-class1" placeholder="e.g. 5th"></div>
+        <div><p class="lbl-sm">Year</p><input type="text" id="ad-year1" placeholder="e.g. 2025"></div>
+      </div>
+    </div>
+
+    <div class="card no-print">
+      <button class="btn btn-primary" type="button" onclick="generateAdmissionPdf()">🎓 Generate Admission PDF</button>
+      <div class="hint" style="text-align:center; padding-left:0; margin-top:10px;">PDF seedhi download ho jayegi — Downloads folder mein check karein.</div>
+    </div>
+  </section>
+
+  <div class="pagefoot">Rahim's Tools</div>
+
+</div>
+</div>
+
+<!-- ============ DESIGNED ADMISSION PDF TEMPLATE (only appears when printing) ============ -->
+<div id="admpdf-template">
+  <div id="admpdf-page">
+    <div class="admpdf-border-frame"></div>
+    <div class="admpdf-corner admpdf-cf-tl"></div>
+    <div class="admpdf-corner admpdf-cf-tr"></div>
+    <div class="admpdf-corner admpdf-cf-bl"></div>
+    <div class="admpdf-corner admpdf-cf-br"></div>
+
+    <div class="admpdf-content">
+      <div class="admpdf-header">
+        <div class="admpdf-school-name">Punjkora Public High School</div>
+        <div class="admpdf-school-tagline">Excellence in Education Since Establishment</div>
+      </div>
+
+      <div class="admpdf-title"><span>Admission Form</span></div>
+
+      <div class="admpdf-top-row">
+        <div class="admpdf-date-field">Date: <span class="val" id="admpdf-out-date">&nbsp;</span></div>
+      </div>
+
+      <div class="admpdf-section">
+        <div class="admpdf-section-title">Student Information</div>
+        <div class="admpdf-form-grid">
+          <div class="admpdf-field wide"><span class="label">Name:</span><span class="val" id="admpdf-out-name">&nbsp;</span></div>
+          <div class="admpdf-field"><span class="label">Date of Birth:</span><span class="val" id="admpdf-out-dob">&nbsp;</span></div>
+          <div class="admpdf-field"><span class="label">Gender:</span><span class="val" id="admpdf-out-gender">&nbsp;</span></div>
+          <div class="admpdf-field wide"><span class="label">Address:</span><span class="val" id="admpdf-out-address">&nbsp;</span></div>
+        </div>
+      </div>
+
+      <div class="admpdf-section">
+        <div class="admpdf-section-title">Parents Information</div>
+        <div class="admpdf-form-grid">
+          <div class="admpdf-field"><span class="label">Father Name:</span><span class="val" id="admpdf-out-father">&nbsp;</span></div>
+          <div class="admpdf-field"><span class="label">Contact:</span><span class="val" id="admpdf-out-contact">&nbsp;</span></div>
+        </div>
+      </div>
+
+      <div class="admpdf-section">
+        <div class="admpdf-section-title">Previous Academic Records</div>
+        <table class="admpdf-academic-table">
+          <thead>
+            <tr><th>School Name</th><th>Class</th><th>Year</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td id="admpdf-out-school1">&nbsp;</td>
+              <td id="admpdf-out-class1">&nbsp;</td>
+              <td id="admpdf-out-year1">&nbsp;</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="admpdf-declaration">
+        I hereby declare that the information provided above is true and correct to the best of my knowledge.
+        I understand that any false information may result in the cancellation of admission.
+      </div>
+
+      <div class="admpdf-section admpdf-rules">
+        <div class="admpdf-section-title">Rules &amp; Undertaking</div>
+        <div class="admpdf-rules-text">
+          <p><b>فیس کی ادائیگی:</b> میں اس بات کا پابند ہوں کہ اپنے بچے کی ماہانہ فیس اور دیگر واجبات مقررہ وقت پر ادا کروں گا/گی۔</p>
+          <p><b>نظم و ضبط:</b> میں اس بات سے اتفاق کرتا/کرتی ہوں کہ میرا بچہ اسکول کے تمام قواعد و ضوابط کی پابندی کرے گا اور اساتذہ، عملے اور دیگر طلبہ کے ساتھ احترام سے پیش آئے گا۔</p>
+          <p><b>خلافِ ضابطہ:</b> اگر میرا بچہ اسکول کے قواعد کی سنگین خلاف ورزی، بدتمیزی، لڑائی جھگڑے یا کسی غیر مناسب/نقصان دہ سرگرمی میں ملوث پایا گیا تو اسکول کے مقررہ ضوابط کے مطابق تادیبی کارروائی کی جا سکتی ہے۔</p>
+          <p><b>والدین کی ذمہ داری:</b> میں یقین دلاتا/دلاتی ہوں کہ اسکول کے ساتھ مکمل تعاون کروں گا/گی اور اپنے بچے کی تعلیمی کارکردگی، حاضری اور نظم و ضبط کے حوالے سے اسکول کی ہدایات پر عمل کروں گا/گی۔</p>
+        </div>
+      </div>
+
+      <div class="admpdf-signatures">
+        <div class="admpdf-sign-box">
+          <div class="admpdf-sign-line"></div>
+          Parent / Guardian Signature
+        </div>
+        <div class="admpdf-sign-box">
+          <div class="admpdf-sign-line"></div>
+          Principal Signature
+        </div>
+      </div>
+
+      <div class="admpdf-footer">
+        PUNJKORA PUBLIC HIGH SCHOOL &nbsp;&bull;&nbsp; Admission Office &nbsp;&bull;&nbsp; This form is valid only when duly signed and stamped.
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   SHARED: key-click sound + service worker (used across all tabs)
+   ============================================================ */
+let audioCtx;
+function playKeySound(deleting=false){
+  try{audioCtx ||= new (window.AudioContext||window.webkitAudioContext)(); if(audioCtx.state==="suspended") audioCtx.resume(); const o=audioCtx.createOscillator(),g=audioCtx.createGain(),n=audioCtx.currentTime; o.type="sine"; o.frequency.setValueAtTime(deleting?180:420,n); o.frequency.exponentialRampToValueAtTime(deleting?110:300,n+.045); g.gain.setValueAtTime(.0001,n); g.gain.exponentialRampToValueAtTime(deleting?.035:.025,n+.006); g.gain.exponentialRampToValueAtTime(.0001,n+.055); o.connect(g).connect(audioCtx.destination); o.start(n); o.stop(n+.06);}catch(e){}
+}
+document.addEventListener("input",e=>{if(e.target.matches("input,textarea")&&e.target.value)playKeySound(false);});
+document.addEventListener("keydown",e=>{if(e.target.matches("input,textarea")&&e.key==="Backspace")playKeySound(true);});
+
+
+/* ============================================================
+   SHARED: welcome screen -> menu screen -> app
+   ============================================================ */
+function attStartApp(){
+  document.getElementById("welcome").classList.add("hide");
+  document.getElementById("menuScreen").classList.add("show");
+}
+function setGreeting(){
+  const h=new Date().getHours();
+  const el=document.getElementById("welcomeGreeting");
+  el.textContent = h<12 ? "Good Morning" : h<17 ? "Good Afternoon" : "Good Evening";
+}
+setGreeting();
+
+function switchTab(name){
+  document.querySelectorAll(".tab-panel").forEach(p=>p.classList.remove("active"));
+  document.querySelectorAll(".tile").forEach(b=>b.classList.remove("active"));
+  document.getElementById("tab-"+name).classList.add("active");
+  const btn = document.querySelector('.tile[data-tab="'+name+'"]');
+  if(btn) btn.classList.add("active");
+}
+
+function showSection(name){
+  document.getElementById("appRoot").classList.add("show");
+  switchTab(name);
+  document.body.classList.remove("view-home");
+  document.body.classList.add("view-section");
+  document.body.classList.toggle("view-hw", name === "homework");
+  window.scrollTo(0,0);
+  if(name === "attendance"){
+    checkAttendanceLock();
+    setTimeout(function(){
+      var f=document.getElementById("att-className");
+      if(f && !document.getElementById("att-fieldsWrap").classList.contains("locked")) f.focus({preventScroll:true});
+    }, 300);
+  }
+}
+function showHome(){
+  /* leaving a fee section locks it again */
+  feeUnlocked = false;
+  try{ sessionStorage.removeItem("pps_fee_unlocked"); }catch(e){}
+  document.querySelectorAll(".tab-panel").forEach(p=>p.classList.remove("active"));
+  document.querySelectorAll(".tile").forEach(b=>b.classList.remove("active"));
+  document.body.classList.remove("view-section");
+  document.body.classList.add("view-home");
+  document.body.classList.remove("view-hw");
+  if(document.activeElement && document.activeElement.blur) document.activeElement.blur();
+  window.scrollTo(0,0);
+}
+function proceedToTab(name){
+  try{ history.pushState({tab:name}, "", "#"+name); }catch(e){}
+  showSection(name);
+}
+function goHome(){
+  if(history.state && history.state.tab){ history.back(); }
+  else { showHome(); }
+}
+window.addEventListener("popstate", function(e){
+  var t = e.state && e.state.tab;
+  if(t && (OPEN_TABS.indexOf(t) !== -1 || feeUnlocked)) showSection(t); else showHome();
+});
+
+/* ============================================================
+   SHARED: Attendance closes after 1:00 PM (13:00) device time
+   — unless unlocked with the late-attendance password
+   ============================================================ */
+const ATT_LATE_PASSWORD = "mr0511";
+let attLateUnlocked = sessionStorage.getItem("pps_att_late_unlocked") === "1";
+
+function checkAttendanceLock(){
+  var locked = new Date().getHours() >= 13 && !attLateUnlocked;
+  var overlay = document.getElementById("att-lockOverlay");
+  var fields = document.getElementById("att-fieldsWrap");
+  if(!overlay || !fields) return;
+  if(locked){
+    overlay.style.display = "block";
+    fields.style.display = "none";
+  } else {
+    overlay.style.display = "none";
+    fields.style.display = "block";
+  }
+}
+checkAttendanceLock();
+setInterval(checkAttendanceLock, 60000);
+
+function attUnlockLate(){
+  var input = document.getElementById("att-latePassInput");
+  var error = document.getElementById("att-latePassError");
+  var val = input ? input.value.trim() : "";
+  if(val === ATT_LATE_PASSWORD){
+    attLateUnlocked = true;
+    sessionStorage.setItem("pps_att_late_unlocked", "1");
+    if(error) error.textContent = "";
+    if(input) input.value = "";
+    checkAttendanceLock();
+  } else {
+    if(error) error.textContent = "غلط پاس ورڈ۔ دوبارہ کوشش کریں۔";
+  }
+}
+(function(){
+  var latePassInput = document.getElementById("att-latePassInput");
+  if(latePassInput){
+    latePassInput.addEventListener("keydown", function(e){
+      if(e.key === "Enter"){ e.preventDefault(); attUnlockLate(); }
+    });
+  }
+})();
+
+/* ============================================================
+   SHARED: live ticking clock shown on the attendance lock screen
+   ============================================================ */
+function tickLiveClock(){
+  var hourEl = document.getElementById("liveClockHour");
+  var minuteEl = document.getElementById("liveClockMinute");
+  var secondEl = document.getElementById("liveClockSecond");
+  if(!hourEl || !minuteEl || !secondEl) return;
+  var now = new Date();
+  var h = now.getHours() % 12;
+  var m = now.getMinutes();
+  var s = now.getSeconds();
+  var hourDeg = (h * 30) + (m * 0.5);
+  var minuteDeg = (m * 6) + (s * 0.1);
+  var secondDeg = s * 6;
+  hourEl.style.transform = "rotate(" + hourDeg + "deg)";
+  minuteEl.style.transform = "rotate(" + minuteDeg + "deg)";
+  secondEl.style.transform = "rotate(" + secondDeg + "deg)";
+}
+tickLiveClock();
+setInterval(tickLiveClock, 1000);
+
+/* ============================================================
+   SHARED: password lock for Fee Receipt / Fee Reminder
+   (asked once per session — unlocks for the rest of the visit)
+   Only Attendance is open without a password.
+   ============================================================ */
+const FEE_PASSWORD = "mr05";
+let feeUnlocked = sessionStorage.getItem("pps_fee_unlocked") === "1";
+let pendingTab = null;
+const OPEN_TABS = ["attendance","homework"];
+
+function tryTab(name){
+  if(OPEN_TABS.indexOf(name) !== -1 || feeUnlocked){ proceedToTab(name); return; }
+  pendingTab = name;
+  openLoginModal();
+}
+function openLoginModal(){
+  document.getElementById("loginModal").classList.add("show");
+  document.getElementById("loginError").textContent = "";
+  const input=document.getElementById("loginPassInput");
+  input.value = "";
+  setTimeout(function(){ input.focus(); }, 60);
+}
+function closeLoginModal(){
+  document.getElementById("loginModal").classList.remove("show");
+  pendingTab = null;
+}
+function submitLoginPass(){
+  const val = document.getElementById("loginPassInput").value;
+  if(val === FEE_PASSWORD){
+    feeUnlocked = true;
+    sessionStorage.setItem("pps_fee_unlocked","1");
+    const goTo = pendingTab;
+    closeLoginModal();
+    if(goTo){ proceedToTab(goTo); }
+  } else {
+    document.getElementById("loginError").textContent = "غلط پاس ورڈ! دوبارہ کوشش کریں۔";
+  }
+}
+document.getElementById("loginPassInput").addEventListener("keydown", function(e){
+  if(e.key === "Enter"){ e.preventDefault(); submitLoginPass(); }
+});
+
+/* ============================================================
+   SHARED: glitch-in page titles (all upper case)
+   ============================================================ */
+function buildGlitchTitle(elId, text){
+  const el = document.getElementById(elId);
+  if(!el) return;
+  el.textContent = "";
+  text.split("").forEach(function(letter,i){
+    const s=document.createElement("span");
+    s.className="glitch-letter"; s.style.setProperty("--i", i);
+    s.textContent = letter===" " ? "\u00A0" : letter;
+    el.appendChild(s);
+  });
+}
+buildGlitchTitle("receiptTitle","FEE RECEIPT");
+buildGlitchTitle("reminderTitle","FEE REMINDER");
+buildGlitchTitle("admissionTitle","ADMISSION");
+
+/* ============================================================
+   ATTENDANCE TAB — logic unchanged, ids/functions namespaced
+   ============================================================ */
+(function(){
+  function currentDeviceDate(){
+    const d=new Date();
+    const day=String(d.getDate()).padStart(2,'0');
+    const month=d.toLocaleString('en-US',{month:'long'});
+    const year=d.getFullYear();
+    return `${day} ${month} ${year}`;
+  }
+  document.getElementById("att-date").value=currentDeviceDate();
+
+  function capitalizeWords(value){
+    return value.replace(/(^|\s)(\S)/g,(m,space,letter)=>space+letter.toUpperCase());
+  }
+
+  function updateCounts(){
+    document.getElementById("att-absentCount").textContent = getNames("absent").length;
+    document.getElementById("att-leaveCount").textContent = getNames("leave").length;
+  }
+
+  function renumber(type){
+    const list=document.getElementById("att-"+type+"List");
+    [...list.querySelectorAll(".roll-no")].forEach((el,i)=>{el.textContent=i+1;});
+  }
+
+  function addStudent(type){
+    const list=document.getElementById("att-"+type+"List");
+    const row=document.createElement("div");
+    row.className="row";
+    const rollNo=list.children.length+1;
+    const placeholderName = type === "leave" ? "Rahim" : "Alina";
+    row.innerHTML=`<span class="roll-no">${rollNo}</span>
+                   <input type="text" class="att-${type}" placeholder="${placeholderName}">
+                   <button class="remove" type="button" aria-label="Remove">×</button>`;
+    list.appendChild(row);
+    const input=row.querySelector("input");
+    input.addEventListener("input",()=>{
+      const pos=input.selectionStart;
+      input.value=capitalizeWords(input.value);
+      input.setSelectionRange(pos,pos);
+      updateCounts();
+    });
+    row.querySelector(".remove").addEventListener("click",()=>{
+      row.remove();
+      renumber(type);
+      updateCounts();
+    });
+    input.focus();
+    updateCounts();
+  }
+
+  function requireClassSelected(){
+    const sel=document.getElementById("att-className");
+    const err=document.getElementById("att-classNameError");
+    if(!sel.value){
+      sel.classList.add("error-input");
+      if(err){ err.textContent="پہلے کلاس منتخب کریں"; err.classList.add("show"); }
+      sel.focus();
+      return false;
+    }
+    sel.classList.remove("error-input");
+    if(err){ err.classList.remove("show"); err.textContent=""; }
+    return true;
+  }
+  document.getElementById("att-className").addEventListener("change", requireClassSelected);
+
+  function addStudentGuarded(type){
+    if(!requireClassSelected()) return;
+    addStudent(type);
+  }
+
+  function getNames(cls){
+    return [...document.querySelectorAll(".att-"+cls)]
+      .map(x=>x.value.trim()).filter(Boolean);
+  }
+
+  function makeMessage(){
+    const cls=document.getElementById("att-className").value.trim() || "CLASS";
+    const absent=getNames("absent");
+    const leave=getNames("leave");
+    const master=document.getElementById("att-master").value.trim();
+
+    let msg=`*CLASS ${cls}  |  ATTENDANCE*\n`;
+    msg+=`Date: ${document.getElementById("att-date").value}\n\n`;
+    msg+=`*ABSENT STUDENTS*\n`;
+
+    if(absent.length){
+      absent.forEach((student,i)=>{ msg+=`${i+1}. ${student}\n`; });
+    }else{
+      msg+="No absent students\n";
+    }
+
+    msg+=`\n*STUDENTS ON LEAVE*\n`;
+    if(leave.length){
+      leave.forEach((student,i)=>{ msg+=`${i+1}. ${student}\n`; });
+    }else{
+      msg+="None";
+    }
+    if(master){msg+=`\n\nForm Master: *${master}*`;}
+    return msg;
+  }
+
+  // Converts a Pakistani number in any common local format into the
+  // digits-only international format wa.me requires.
+  function normalizePhone(raw){
+    let digits = raw.replace(/\D/g,"");
+    if(digits.startsWith("0")){ digits = "92" + digits.slice(1); }
+    else if(!digits.startsWith("92")){ digits = "92" + digits; }
+    return digits;
+  }
+
+  function sendWhatsApp(number){
+    if(!requireClassSelected()) return;
+    const msg=makeMessage();
+    const phone=normalizePhone(number);
+    const url="https://wa.me/"+phone+"?text="+encodeURIComponent(msg);
+    window.open(url,"_blank");
+  }
+
+  addStudent("absent");
+  addStudent("leave");
+
+  buildGlitchTitle("attendanceTitle","ATTENDANCE");
+
+  window.attAddStudent=addStudentGuarded;
+  window.attSendWhatsApp=sendWhatsApp;
+})();
+
+/* ============================================================
+   FEE RECEIPT TAB — logic unchanged, ids namespaced with fr- prefix
+   (only the "date" field id was renamed to fr-date to avoid
+   clashing with the Attendance tab's own date field)
+   ============================================================ */
+(function () {
+  var FEE_TYPES = [
+    { id: "monthly", label: "Monthly Fee", ur: "ماہانہ فیس" },
+    { id: "admission", label: "Admission Fee", ur: "داخلہ فیس" },
+    { id: "promotion", label: "Promotion Fee", ur: "پروموشن فیس" },
+    { id: "exam", label: "Exam Fee", ur: "امتحانی فیس" }
+  ];
+
+  function todayISO() {
+    var d = new Date();
+    var m = String(d.getMonth() + 1).padStart(2, "0");
+    var day = String(d.getDate()).padStart(2, "0");
+    return d.getFullYear() + "-" + m + "-" + day;
+  }
+  function formatDate(iso) {
+    if (!iso) return "—";
+    var parts = iso.split("-");
+    var d = new Date(parts[0], parts[1] - 1, parts[2]);
+    var months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+    return String(d.getDate()).padStart(2,"0") + " " + months[d.getMonth()] + " " + d.getFullYear();
+  }
+  function normalizePhone(raw) {
+    var p = (raw || "").replace(/[^\d+]/g, "");
+    if (p.indexOf("+") === 0) p = p.slice(1);
+    if (p.indexOf("0") === 0) p = "92" + p.slice(1);
+    if (p.indexOf("92") === 0) return p;
+    if (p.length === 10) return "92" + p;
+    return p;
+  }
+
+  var $ = function (id) { return document.getElementById(id); };
+
+  function getFeeState() {
+    var state = {};
+    FEE_TYPES.forEach(function (f) {
+      state[f.id] = {
+        checked: $("fr-chk-" + f.id).checked,
+        amount: $("fr-amt-" + f.id).value
+      };
+    });
+    return state;
+  }
+
+  function buildDefaultMessage(feeState, hasArrears) {
+    var labels = FEE_TYPES.filter(function (f) { return feeState[f.id].checked; }).map(function (f) { return f.ur; });
+    var phrase;
+    if (labels.length === 0) phrase = "فیس";
+    else if (labels.length === 1) phrase = labels[0];
+    else phrase = labels.slice(0, -1).join("، ") + " اور " + labels[labels.length - 1];
+    var msg = "السلام علیکم" + "\n" + "آپ کے بچے کی " + phrase + " جمع ہو گئی ہے۔ شکریہ!!";
+    if (hasArrears) msg += "\nآپ کے بقایا جات (Arrears) ابھی باقی ہیں، براہ کرم انہیں جلد از جلد جمع کروائیں۔ کسی بھی مسئلے کی صورت میں اسکول انتظامیہ سے رابطہ کریں۔";
+    return msg;
+  }
+
+  function calcTotals(feeState) {
+    var feesTotal = 0;
+    FEE_TYPES.forEach(function (f) {
+      if (feeState[f.id].checked) feesTotal += Number(feeState[f.id].amount) || 0;
+    });
+    var arrears = Number($("fr-arrears").value) || 0;
+    return { feesTotal: feesTotal, arrears: arrears, grand: feesTotal };
+  }
+
+  function updateMessageIfAuto() {
+    var feeState = getFeeState();
+    var totals = calcTotals(feeState);
+    $("fr-message").value = buildDefaultMessage(feeState, totals.arrears > 0);
+  }
+
+  function render() {
+    var feeState = getFeeState();
+    var totals = calcTotals(feeState);
+
+    FEE_TYPES.forEach(function (f) {
+      var row = $("fr-row-" + f.id);
+      if (feeState[f.id].checked) row.classList.add("on");
+      else row.classList.remove("on");
+    });
+    $("fr-periodField").style.display = feeState.monthly.checked ? "block" : "none";
+
+    var selectedLabels = FEE_TYPES.filter(function (f) { return feeState[f.id].checked; }).map(function (f) { return f.label; });
+    $("fr-feeDropdownLabel").textContent = selectedLabels.length ? selectedLabels.join(", ") : "Select fee types";
+
+    $("fr-formTotal").textContent = "Rs. " + totals.grand;
+
+    $("fr-p-student").textContent = $("fr-studentName").value || "—";
+    $("fr-p-class").textContent = $("fr-studentClass").value || "—";
+    $("fr-p-date").textContent = formatDate($("fr-date").value);
+
+    var feeListHtml = "";
+    var selected = FEE_TYPES.filter(function (f) { return feeState[f.id].checked; });
+    if (selected.length === 0) {
+      feeListHtml = '<div style="font-size:13px; color: var(--ink-soft);">No fee type selected</div>';
+    } else {
+      selected.forEach(function (f) {
+        var suffix = (f.id === "monthly" && $("fr-period").value) ? " — " + $("fr-period").value : "";
+        feeListHtml += '<div class="fee-line"><span>' + f.label + suffix + '</span><span class="amt">Rs. ' + (feeState[f.id].amount || 0) + '</span></div>';
+      });
+    }
+    $("fr-p-feeList").innerHTML = feeListHtml;
+    $("fr-p-total").textContent = "Rs. " + totals.grand;
+    $("fr-p-arrears").textContent = "Rs. " + totals.arrears;
+    $("fr-arrearsRow").style.display = totals.arrears > 0 ? "flex" : "none";
+    $("fr-p-message").textContent = $("fr-message").value;
+  }
+
+  function buildWaMessage() {
+    var feeState = getFeeState();
+    var totals = calcTotals(feeState);
+    var lines = [
+      "*PPS FEE RECEIPT*",
+      "*Date:* " + formatDate($("fr-date").value),
+      "*Receipt No:* " + ($("fr-receiptNo").value || "—"),
+      "*Student:* " + ($("fr-studentName").value || "—"),
+      "*Class:* " + ($("fr-studentClass").value || "—")
+    ];
+    FEE_TYPES.forEach(function (f) {
+      if (feeState[f.id].checked) {
+        var suffix = (f.id === "monthly" && $("fr-period").value) ? " (" + $("fr-period").value + ")" : "";
+        lines.push("*" + f.label + suffix + ":* Rs. " + (feeState[f.id].amount || 0));
+      }
+    });
+    lines.push("*Total received:* Rs. " + totals.grand);
+    if (totals.arrears > 0) lines.push("*Arrears (بقایا جات):* Rs. " + totals.arrears);
+    lines.push("");
+    var msgLines = $("fr-message").value.split("\n");
+    msgLines.forEach(function (l) {
+      if (l.trim() !== "") lines.push("*" + l + "*");
+    });
+    return lines.join("\n");
+  }
+
+  function buildSmsMessage() {
+    return buildWaMessage().replace(/\*/g, "");
+  }
+
+  function isIOS() {
+    return /iPad|iPhone|iPod/.test(navigator.userAgent);
+  }
+
+  var RECORDS_KEY = "pps_fee_records_v1";
+
+  function getRecords() {
+    try {
+      var raw = localStorage.getItem(RECORDS_KEY);
+      return raw ? JSON.parse(raw) : [];
+    } catch (e) { return []; }
+  }
+  function setRecords(records) {
+    try { localStorage.setItem(RECORDS_KEY, JSON.stringify(records)); return true; }
+    catch (e) { return false; }
+  }
+  function renderRecordsSummary() {
+    var records = getRecords();
+    var total = records.reduce(function (sum, r) { return sum + (Number(r.total) || 0); }, 0);
+    $("fr-recordCount").textContent = records.length;
+    $("fr-recordTotal").textContent = "Rs. " + total;
+  }
+  function saveCurrentReceiptToRecords() {
+    var feeState = getFeeState();
+    var totals = calcTotals(feeState);
+    var records = getRecords();
+    var record = {
+      id: Date.now(),
+      date: $("fr-date").value || todayISO(),
+      receiptNo: $("fr-receiptNo").value || "",
+      studentName: $("fr-studentName").value || "",
+      studentClass: $("fr-studentClass").value || "",
+      total: totals.grand
+    };
+    records.push(record);
+    setRecords(records);
+    renderRecordsSummary();
+    return appendRecordToSheet(record);
+  }
+
+  function exportRecordsAsPdf() {
+    var records = getRecords();
+    var total = records.reduce(function (sum, r) { return sum + (Number(r.total) || 0); }, 0);
+    var rowsHtml = records.length === 0
+      ? '<tr><td colspan="5" style="text-align:center; color:#697182; padding:16px;">No saved receipts yet</td></tr>'
+      : records.map(function (r) {
+          return "<tr>" +
+            "<td>" + formatDate(r.date) + "</td>" +
+            "<td>" + (r.receiptNo || "—") + "</td>" +
+            "<td>" + (r.studentName || "—") + "</td>" +
+            "<td>" + (r.studentClass || "—") + "</td>" +
+            "<td style='text-align:right;'>Rs. " + r.total + "</td>" +
+          "</tr>";
+        }).join("");
+
+    var html =
+      "<!doctype html><html><head><meta charset='UTF-8'><title>PPS Income Report</title>" +
+      "<style>" +
+      "body{font-family:Arial,sans-serif;color:#1B2434;padding:24px;}" +
+      "h1{font-size:20px;margin-bottom:2px;}" +
+      "p.sub{color:#697182;margin-top:0;font-size:13px;}" +
+      "table{width:100%;border-collapse:collapse;margin-top:16px;font-size:13px;}" +
+      "th,td{border:1px solid #E2E5EB;padding:8px 10px;text-align:left;}" +
+      "th{background:#F2F4F7;}" +
+      "tfoot td{font-weight:bold;background:#E4F4F2;}" +
+      "</style></head><body>" +
+      "<h1>PPS FEE RECEIPT — Income Report</h1>" +
+      "<p class='sub'>Generated " + formatDate(todayISO()) + " · Total received only (arrears excluded)</p>" +
+      "<table><thead><tr><th>Date</th><th>Receipt No.</th><th>Student</th><th>Class</th><th style='text-align:right;'>Total received</th></tr></thead>" +
+      "<tbody>" + rowsHtml + "</tbody>" +
+      "<tfoot><tr><td colspan='4'>Grand total</td><td style='text-align:right;'>Rs. " + total + "</td></tr></tfoot>" +
+      "</table></body></html>";
+
+    var w = window.open("", "_blank");
+    if (!w) return;
+    w.document.open();
+    w.document.write(html);
+    w.document.close();
+    w.focus();
+    setTimeout(function () { w.print(); }, 300);
+  }
+
+  // --- Google Drive / Sheets live sync ---
+  var GOOGLE_CLIENT_ID = "YOUR_CLIENT_ID.apps.googleusercontent.com";
+  var SPREADSHEET_ID = "1ffQU8Mo_CNSyr8auAOGCIMFdVU6iTuKM_NgX1jtXwXs";
+  var SHEET_RANGE = "Sheet1!A1";
+
+  var driveAccessToken = null;
+  var tokenClient = null;
+
+  function initGoogleAuth() {
+    if (!window.google || !google.accounts || GOOGLE_CLIENT_ID.indexOf("YOUR_CLIENT_ID") === 0) {
+      $("fr-driveStatus").textContent = "Google sign-in not configured yet.";
+      return;
+    }
+    tokenClient = google.accounts.oauth2.initTokenClient({
+      client_id: GOOGLE_CLIENT_ID,
+      scope: "https://www.googleapis.com/auth/spreadsheets",
+      callback: function (resp) {
+        if (resp && resp.access_token) {
+          driveAccessToken = resp.access_token;
+          $("fr-driveStatus").textContent = "✅ Connected — new saves sync to Google Sheet automatically.";
+          $("fr-btnConnectDrive").textContent = "🔗 Reconnect Google Account";
+        }
+      }
+    });
+  }
+  function connectGoogleDrive() {
+    if (!tokenClient) { initGoogleAuth(); }
+    if (tokenClient) tokenClient.requestAccessToken();
+  }
+  function appendRecordToSheet(record) {
+    if (!driveAccessToken) return Promise.resolve(false);
+    var url = "https://sheets.googleapis.com/v4/spreadsheets/" + SPREADSHEET_ID +
+      "/values/" + encodeURIComponent(SHEET_RANGE) + ":append?valueInputOption=USER_ENTERED";
+    return fetch(url, {
+      method: "POST",
+      headers: { "Authorization": "Bearer " + driveAccessToken, "Content-Type": "application/json" },
+      body: JSON.stringify({
+        values: [[ formatDate(record.date), record.receiptNo, record.studentName, record.studentClass, record.total ]]
+      })
+    }).then(function (r) { return r.ok; }).catch(function () { return false; });
+  }
+
+  function buildRecordsBackupText() {
+    var records = getRecords();
+    var lines = ["Date,Receipt No.,Student Name,Class,Total Received (Rs.)"];
+    records.forEach(function (r) {
+      lines.push([formatDate(r.date), r.receiptNo || "", r.studentName || "", r.studentClass || "", r.total].join(","));
+    });
+    return lines.join("\n");
+  }
+
+  $("fr-date").value = todayISO();
+  $("fr-chk-monthly").checked = true;
+  updateMessageIfAuto();
+  render();
+  renderRecordsSummary();
+
+  ["fr-date","fr-receiptNo","fr-studentName","fr-studentClass","fr-period","fr-guardianPhone"].forEach(function (id) {
+    $(id).addEventListener("input", render);
+  });
+  $("fr-arrears").addEventListener("input", function () { updateMessageIfAuto(); render(); });
+  $("fr-message").addEventListener("input", render);
+  FEE_TYPES.forEach(function (f) {
+    $("fr-chk-" + f.id).addEventListener("change", function () { updateMessageIfAuto(); render(); });
+    $("fr-amt-" + f.id).addEventListener("input", render);
+  });
+  $("fr-btnPrint").addEventListener("click", function () { window.print(); });
+  $("fr-btnCopy").addEventListener("click", function () {
+    var text = buildWaMessage();
+    if (navigator.clipboard && navigator.clipboard.writeText) { navigator.clipboard.writeText(text); }
+    else {
+      var ta = document.createElement("textarea");
+      ta.value = text; document.body.appendChild(ta); ta.select();
+      document.execCommand("copy"); document.body.removeChild(ta);
+    }
+    var btn = $("fr-btnCopy"); var old = btn.textContent;
+    btn.textContent = "✅ Copied"; setTimeout(function () { btn.textContent = old; }, 1500);
+  });
+  $("fr-btnWhatsapp").addEventListener("click", function () {
+    var phone = normalizePhone($("fr-guardianPhone").value);
+    var url = "https://wa.me/" + phone + "?text=" + encodeURIComponent(buildWaMessage());
+    window.open(url, "_blank");
+  });
+  $("fr-btnSms").addEventListener("click", function () {
+    var normalized = normalizePhone($("fr-guardianPhone").value);
+    var number = normalized ? "+" + normalized : "";
+    var sep = isIOS() ? "&" : "?";
+    var url = "sms:" + number + sep + "body=" + encodeURIComponent(buildSmsMessage());
+    window.open(url, "_self");
+  });
+  $("fr-btnSaveRecord").addEventListener("click", function () {
+    var btn = $("fr-btnSaveRecord"); var old = btn.textContent;
+    var synced = !!driveAccessToken;
+    saveCurrentReceiptToRecords().then(function (ok) {
+      btn.textContent = synced && ok ? "✅ Saved & synced to Drive" : "✅ Saved locally";
+      setTimeout(function () { btn.textContent = old; }, 1800);
+    });
+  });
+  $("fr-btnConnectDrive").addEventListener("click", connectGoogleDrive);
+  initGoogleAuth();
+  $("fr-btnExportPdf").addEventListener("click", exportRecordsAsPdf);
+  $("fr-btnCopyRecords").addEventListener("click", function () {
+    var text = buildRecordsBackupText();
+    if (navigator.clipboard && navigator.clipboard.writeText) { navigator.clipboard.writeText(text); }
+    else {
+      var ta = document.createElement("textarea");
+      ta.value = text; document.body.appendChild(ta); ta.select();
+      document.execCommand("copy"); document.body.removeChild(ta);
+    }
+    var btn = $("fr-btnCopyRecords"); var old = btn.textContent;
+    btn.textContent = "✅ Copied — paste it to Claude"; setTimeout(function () { btn.textContent = old; }, 2000);
+  });
+  $("fr-btnClearRecords").addEventListener("click", function () {
+    if (window.confirm("Clear all saved income records on this device? This cannot be undone.")) {
+      setRecords([]); renderRecordsSummary();
+    }
+  });
+
+  window.frToggleFeeDropdown = function () {
+    $("fr-feeDropdown").classList.toggle("open");
+  };
+  document.addEventListener("click", function (e) {
+    var dd = $("fr-feeDropdown");
+    if (dd && dd.classList.contains("open") && !dd.contains(e.target)) {
+      dd.classList.remove("open");
+    }
+  });
+})();
+
+/* ============================================================
+   FEE REMINDER TAB — logic unchanged, ids namespaced with fm- prefix
+   (only "className" was renamed to fm-className to avoid clashing
+   with the Attendance tab's own class field)
+   ============================================================ */
+(function(){
+  const fields=["fm-student","fm-className","fm-previous","fm-current","fm-promotion","fm-admission","fm-phone"];
+  const feeIds=["fm-previous","fm-current","fm-promotion","fm-admission"];
+  feeIds.forEach(id=>document.getElementById(id).addEventListener("input",updateTotal));
+
+  function amount(id){return Number(document.getElementById(id).value)||0}
+  function val(id){return document.getElementById(id).value.trim()}
+  function fmt(n){return n.toLocaleString("en-PK")}
+  function updateTotal(){
+    const total=feeIds.reduce((s,id)=>s+amount(id),0);
+    document.getElementById("fm-total").textContent="Rs. "+fmt(total);
+  }
+  function buildMessage(whatsapp=false){
+    const student=val("fm-student")||"[Student Name]", cls=val("fm-className")||"[Class]";
+    const previous=amount("fm-previous"),current=amount("fm-current"),promotion=amount("fm-promotion"),admission=amount("fm-admission");
+    const total=previous+current+promotion+admission, rows=[];
+    if(previous)rows.push(["پچھلے بقایا جات",previous]);
+    if(current)rows.push(["موجودہ فیس",current]);
+    if(promotion)rows.push(["پروموشن فیس",promotion]);
+    if(admission)rows.push(["داخلہ فیس",admission]);
+    if(whatsapp){
+      const B=t=>`*${t}*`;
+      return `السلام علیکم!
+
+امید ہے کہ آپ خیریت و عافیت سے ہوں گے۔ اللہ تعالیٰ آپ کو اور آپ کے اہلِ خانہ کو ہمیشہ خوش و سلامت رکھے۔
+
+آپ کو مؤدبانہ اطلاع دی جاتی ہے کہ آپ کے بچے ${B(student)}، جماعت ${B(cls)} کی فیس کے سلسلے میں درج ذیل رقم واجب الادا ہے:
+
+${rows.map(([l,n])=>B(l+": "+fmt(n)+" روپے")).join("\n")}
+${B("کل واجب الادا رقم: "+fmt(total)+" روپے")}
+
+براہِ کرم اپنی سہولت کے مطابق اپنے بچے کی فیس جلد از جلد جمع کروا دیں، تاکہ فیس کا ریکارڈ بروقت مکمل کیا جا سکے۔
+
+آپ کے تعاون اور بروقت ادائیگی کا تہہ دل سے شکریہ۔
+
+${B("اکاؤنٹنٹ")}
+${B("پنجکوڑہ پبلک ہائی سکول")}`;
+    }
+    return `السلام علیکم!
+
+امید ہے کہ آپ خیریت و عافیت سے ہوں گے۔ اللہ تعالیٰ آپ کو اور آپ کے اہلِ خانہ کو ہمیشہ خوش و سلامت رکھے۔
+
+آپ کو مؤدبانہ اطلاع دی جاتی ہے کہ آپ کے بچے ${student}، جماعت ${cls} کی فیس کے سلسلے میں درج ذیل رقم واجب الادا ہے:
+
+${rows.map(([l,n])=>l+": "+fmt(n)+" روپے").join("\n")}
+کل واجب الادا رقم: ${fmt(total)} روپے
+
+براہِ کرم اپنی سہولت کے مطابق اپنے بچے کی فیس جلد از جلد جمع کروا دیں، تاکہ فیس کا ریکارڈ بروقت مکمل کیا جا سکے۔
+
+آپ کے تعاون اور بروقت ادائیگی کا تہہ دل سے شکریہ۔
+
+اکاؤنٹنٹ
+پنجکوڑہ پبلک ہائی سکول`;
+  }
+  function normalizedPhone(){let p=val("fm-phone").replace(/\D/g,"");if(p.startsWith("0"))p="92"+p.slice(1);return p}
+  function sendWhatsApp(){const p=normalizedPhone();if(!p){alert("Please enter the mobile number.");return}window.open("https://wa.me/"+p+"?text="+encodeURIComponent(buildMessage(true)),"_blank")}
+  function sendSMS(){let p=val("fm-phone").replace(/[^\d+]/g,"");if(!p){alert("Please enter the mobile number.");return}window.open("sms:"+p+"?body="+encodeURIComponent(buildMessage(false)),"_self")}
+  function togglePreview(){
+    const box=document.getElementById("fm-previewBox");
+    box.classList.toggle("show");
+    if(box.classList.contains("show"))document.getElementById("fm-previewText").textContent=buildMessage(true).replace(/\*/g,"");
+  }
+  async function copyMessage(){
+    try{await navigator.clipboard.writeText(buildMessage(false));alert("Message copied successfully.");}
+    catch(e){alert("Copy is not available on this device.")}
+  }
+  function resetForm(){
+    fields.forEach(id=>document.getElementById(id).value="");
+    updateTotal();document.getElementById("fm-previewBox").classList.remove("show");
+  }
+  document.getElementById("fm-dateDisplay").textContent=new Date().toLocaleDateString("en-GB",{day:"2-digit",month:"long",year:"numeric"});
+  fields.forEach((id,i)=>{
+    document.getElementById(id).addEventListener("keydown",e=>{
+      if(e.key==="Enter" && i<fields.length-1){e.preventDefault();document.getElementById(fields[i+1]).focus();}
+    });
+  });
+  updateTotal();
+
+  window.fmTogglePreview=togglePreview;
+  window.fmSendWhatsApp=sendWhatsApp;
+  window.fmSendSMS=sendSMS;
+  window.fmResetForm=resetForm;
+  window.fmCopyMessage=copyMessage;
+})();
+
+/* ============================================================
+   ADMISSION TAB — reuses the designed A4 admission PDF template
+   ============================================================ */
+(function(){
+  function admVal(id, fallback){
+    var el = document.getElementById(id);
+    var v = el ? el.value : "";
+    return v && v.trim() !== "" ? v : (fallback || "\u00A0");
+  }
+  function admFormatDate(dstr){
+    if (!dstr) return "\u00A0";
+    var parts = dstr.split("-");
+    if (parts.length !== 3) return dstr;
+    return parts[2] + "-" + parts[1] + "-" + parts[0];
+  }
+  function fillTemplate(){
+    document.getElementById("admpdf-out-date").textContent = admFormatDate(document.getElementById("ad-date").value);
+    document.getElementById("admpdf-out-name").textContent = admVal("ad-name");
+    document.getElementById("admpdf-out-dob").textContent = admFormatDate(document.getElementById("ad-dob").value);
+    document.getElementById("admpdf-out-gender").textContent = admVal("ad-gender");
+    document.getElementById("admpdf-out-address").textContent = admVal("ad-address");
+    document.getElementById("admpdf-out-father").textContent = admVal("ad-father");
+    document.getElementById("admpdf-out-contact").textContent = admVal("ad-contact");
+    document.getElementById("admpdf-out-school1").textContent = admVal("ad-school1");
+    document.getElementById("admpdf-out-class1").textContent = admVal("ad-class1");
+    document.getElementById("admpdf-out-year1").textContent = admVal("ad-year1");
+  }
+
+  // NOTE: We deliberately do NOT use window.print()/@media print for the
+  // admission PDF anymore. On many mobile Chrome / WebView setups the
+  // print pipeline snapshots a blank page for this A4 template no matter
+  // how the timing is tuned. Instead we rasterize the template directly
+  // with html2canvas and build a PDF with jsPDF, then trigger a normal
+  // file download — this sidesteps the browser print pipeline entirely.
+  window.generateAdmissionPdf = function(){
+    try{ fillTemplate(); }catch(e){ /* keep going even if a field lookup fails */ }
+
+    if (typeof html2canvas === "undefined" || !window.jspdf) {
+      alert("PDF library load nahi ho saki. Internet connection check karein aur dobara koshish karein.");
+      return;
+    }
+
+    var tpl = document.getElementById("admpdf-page");
+    var wrapper = document.getElementById("admpdf-template");
+
+    // Temporarily reveal the (normally print-only, display:none) template
+    // off-screen so html2canvas can measure & rasterize it.
+    var prevCssText = wrapper.style.cssText;
+    wrapper.style.cssText = "display:block !important; position:fixed; top:0; left:-10000px; z-index:-1;";
+
+    var btn = document.querySelector('[onclick="generateAdmissionPdf()"]');
+    var prevBtnText = btn ? btn.textContent : null;
+    if (btn) { btn.textContent = "⏳ Generating..."; btn.disabled = true; }
+
+    function restore(){
+      wrapper.style.cssText = prevCssText;
+      if (btn) { btn.textContent = prevBtnText; btn.disabled = false; }
+    }
+
+    // Wait for webfonts (PT Serif, Noto Nastaliq Urdu, etc.) to be fully
+    // loaded before capturing. If html2canvas rasterizes text before a
+    // webfont has finished loading, the browser silently falls back to a
+    // substitute system font that html2canvas measures differently than
+    // it actually renders — that mismatch is what was causing uneven
+    // word spacing. document.fonts.ready guarantees fonts are ready.
+    var fontsReady = (document.fonts && document.fonts.ready) ? document.fonts.ready : Promise.resolve();
+
+    fontsReady.then(function(){
+      // Two animation frames ensure the browser has actually laid out and
+      // painted the revealed template before we capture it.
+      requestAnimationFrame(function(){
+        requestAnimationFrame(function(){
+          html2canvas(tpl, { scale: 2, useCORS: true, backgroundColor: "#ffffff", letterRendering: false }).then(function(canvas){
+            var imgData = canvas.toDataURL("image/jpeg", 0.95);
+            var pdf = new window.jspdf.jsPDF("p", "mm", "a4");
+            var pageWidth = 210, pageHeight = 297;
+            var imgWidth = pageWidth;
+            var imgHeight = canvas.height * imgWidth / canvas.width;
+            if (imgHeight > pageHeight) {
+              imgHeight = pageHeight;
+              imgWidth = canvas.width * imgHeight / canvas.height;
+            }
+            var x = (pageWidth - imgWidth) / 2;
+            var y = 0;
+            pdf.addImage(imgData, "JPEG", x, y, imgWidth, imgHeight);
+            var studentName = (document.getElementById("ad-name").value || "Admission-Form").trim().replace(/\s+/g, "_") || "Admission-Form";
+            pdf.save(studentName + "-Admission-Form.pdf");
+          }).catch(function(err){
+            alert("PDF generate karte waqt masla aaya. Dobara koshish karein.");
+          }).finally(function(){
+            restore();
+          });
+        });
+      });
+    });
+  };
+})();
+
+
+/* first page = buttons only */
+document.getElementById("appRoot").classList.add("show");
+showHome();
+
+
+/* welcome splash: shows for 3s, then slides up and reveals the buttons */
+(function(){
+  var sp = document.getElementById("splash");
+  if(!sp) return;
+  var g = document.getElementById("welcomeGreeting"), sg = document.getElementById("splashGreeting");
+  if(g && sg) sg.textContent = g.textContent;
+  setTimeout(function(){
+    sp.classList.add("leave");
+    document.body.classList.add("revealed");
+    setTimeout(function(){
+      document.body.classList.remove("splash-on");
+      sp.parentNode && sp.parentNode.removeChild(sp);
+    }, 1000);
+    setTimeout(function(){ document.body.classList.add("intro-done"); }, 3600);
+  }, 3000);
+})();
+
+
+/* =====================================================================
+   HOMEWORK CHECK — logic (everything prefixed "hw", nothing shared)
+   ===================================================================== */
+(function(){
+  /* Principal Sahib's WhatsApp number: international format, no + or spaces */
+  var PRINCIPAL_WHATSAPP_NUMBER = "923099795054";
+
+  var $ = function(id){ return document.getElementById(id); };
+  var list = $("hw-students"), dateInput = $("hw-date"), classSel = $("hw-class"),
+      subjSel = $("hw-subject"), otherWrap = $("hw-otherWrap"), otherInput = $("hw-other"),
+      teacherInput = $("hw-teacher");
+  var count = 0;
+
+  function todayLocal(){
+    var d = new Date();
+    return d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2,"0") + "-" + String(d.getDate()).padStart(2,"0");
+  }
+  dateInput.value = todayLocal();
+
+  function updateHeader(){
+    var now = new Date(), h = now.getHours();
+    $("hw-greet").textContent = h < 12 ? "☀️ Good morning" : h < 17 ? "🌤️ Good afternoon" : "🌙 Good evening";
+    $("hw-datepill").textContent = "📅 " + now.toLocaleDateString("en-GB", {weekday:"long", day:"numeric", month:"short"});
+    $("hw-clock").textContent = "🕒 " + now.toLocaleTimeString("en-US", {hour:"2-digit", minute:"2-digit"});
+  }
+  updateHeader();
+  setInterval(updateHeader, 30000);
+
+  function toast(msg){
+    var t = $("hw-toast");
+    t.textContent = msg;
+    t.classList.add("show");
+    clearTimeout(toast._t);
+    toast._t = setTimeout(function(){ t.classList.remove("show"); }, 2600);
+  }
+
+  classSel.addEventListener("change", function(){ $("hw-classField").classList.add("field-ok"); });
+  subjSel.addEventListener("change", function(){
+    $("hw-subjectField").classList.add("field-ok");
+    var isOther = subjSel.value === "__other";
+    otherWrap.classList.toggle("show", isOther);
+    if(isOther) otherInput.focus();
+  });
+
+  function getSubject(){
+    return subjSel.value === "__other" ? otherInput.value.trim() : subjSel.value;
+  }
+
+  function issueCount(row){
+    return (row.querySelector(".book").checked ? 1 : 0) +
+           (row.querySelector(".notebook").checked ? 1 : 0) +
+           (row.querySelector(".homework").checked ? 1 : 0);
+  }
+  function refreshRow(row){
+    row.querySelectorAll(".hw-chip").forEach(function(c){
+      c.classList.toggle("on", c.querySelector("input").checked);
+    });
+    var n = issueCount(row);
+    row.classList.toggle("has-issue", n > 0);
+    row.querySelector(".hw-status").textContent = n > 0 ? n + (n === 1 ? " issue" : " issues") : "All good";
+    refreshTally();
+  }
+  function refreshTally(){
+    var rows = list.querySelectorAll(".hw-row"), flagged = 0;
+    rows.forEach(function(r){ if(issueCount(r) > 0) flagged++; });
+    $("hw-tallyMain").textContent = flagged + (flagged === 1 ? " student flagged" : " students flagged");
+    $("hw-tallySub").textContent = rows.length + (rows.length === 1 ? " student added" : " students added");
+  }
+  function updateNumbers(){
+    list.querySelectorAll(".hw-row").forEach(function(row, i){
+      row.querySelector(".hw-num").textContent = i + 1;
+    });
+  }
+
+  function addStudent(focus){
+    count++;
+    var row = document.createElement("div");
+    row.className = "hw-row added";
+    row.innerHTML =
+      '<div class="hw-top">' +
+        '<div class="hw-num">' + count + '</div>' +
+        '<div class="hw-name"><input type="text" class="student-input" placeholder="Student name" autocomplete="off"></div>' +
+        '<span class="hw-status">All good</span>' +
+        '<button class="hw-remove" type="button" aria-label="Remove student">✕</button>' +
+      '</div>' +
+      '<div class="hw-checks">' +
+        '<label class="hw-chip"><input type="checkbox" class="book"><span class="ic">📚</span><span>Book nahi hai</span></label>' +
+        '<label class="hw-chip"><input type="checkbox" class="notebook"><span class="ic">📓</span><span>Notebook nahi hai</span></label>' +
+        '<label class="hw-chip"><input type="checkbox" class="both"><span class="ic">🚫</span><span>Dono nahi hain</span></label>' +
+        '<label class="hw-chip"><input type="checkbox" class="homework"><span class="ic">📝</span><span>Homework nahi kiya</span></label>' +
+      '</div>';
+
+    row.addEventListener("change", function(e){
+      if(e.target.classList.contains("both")){
+        row.querySelector(".book").checked = e.target.checked;
+        row.querySelector(".notebook").checked = e.target.checked;
+      }
+      refreshRow(row);
+    });
+    row.querySelector(".hw-remove").addEventListener("click", function(){
+      row.remove(); updateNumbers(); refreshTally();
+    });
+    row.querySelector(".student-input").addEventListener("input", refreshTally);
+
+    list.appendChild(row);
+    if(focus) row.querySelector(".student-input").focus();
+    updateNumbers();
+    refreshTally();
+  }
+
+  function formatDate(str){
+    if(!str) return "";
+    return new Date(str + "T00:00:00").toLocaleDateString("en-GB", {day:"2-digit", month:"2-digit", year:"numeric"});
+  }
+
+  function send(){
+    var className = classSel.value, subject = getSubject(), teacher = teacherInput.value.trim();
+    var date = formatDate(dateInput.value), rows = list.querySelectorAll(".hw-row");
+
+    if(!className){ toast("Please select the class."); classSel.focus(); return; }
+    if(!subject){ toast("Please select the subject."); (subjSel.value === "__other" ? otherInput : subjSel).focus(); return; }
+    if(!teacher){ toast("Please enter the teacher name."); teacherInput.focus(); return; }
+    if(rows.length === 0){ toast("Please add at least one student."); return; }
+
+    var report = "*HOMEWORK & MATERIAL REPORT*\n\n" +
+                 "*Class:* " + className + "\n" +
+                 "*Subject:* " + subject + "\n" +
+                 "*Date:* " + date + "\n" +
+                 "*Teacher:* " + teacher + "\n\n";
+    var valid = 0;
+
+    rows.forEach(function(row){
+      var name = row.querySelector(".student-input").value.trim();
+      if(!name) return;
+      valid++;
+      var book = row.querySelector(".book").checked, notebook = row.querySelector(".notebook").checked,
+          both = row.querySelector(".both").checked, homework = row.querySelector(".homework").checked;
+      var issues = [];
+      if(both) issues.push("Book & Notebook nahi hain");
+      else { if(book) issues.push("Book nahi hai"); if(notebook) issues.push("Notebook nahi hai"); }
+      if(homework) issues.push("Homework nahi kiya");
+      if(issues.length > 0) report += valid + ". *" + name + "* — " + issues.join(", ") + "\n";
+    });
+
+    if(valid === 0){ toast("Please enter at least one student's name."); return; }
+    if(PRINCIPAL_WHATSAPP_NUMBER.indexOf("X") !== -1){ toast("Set the Principal Sahib's WhatsApp number in the code first."); return; }
+
+    report += "\n*Total Reported Students:* " + valid;
+    window.open("https://wa.me/" + PRINCIPAL_WHATSAPP_NUMBER + "?text=" + encodeURIComponent(report), "_blank");
+  }
+
+  /* floating school doodles (only visible on the Homework page) */
+  (function(){
+    var icons = ["✏️","📚","⭐","📓","🎒","🖍️","📐","🔔"], box = $("hw-doodles");
+    for(var i = 0; i < 14; i++){
+      var d = document.createElement("span");
+      d.className = "hw-doodle";
+      d.textContent = icons[i % icons.length];
+      d.style.left = (Math.random() * 96) + "%";
+      d.style.fontSize = (20 + Math.random() * 18) + "px";
+      d.style.animationDuration = (22 + Math.random() * 22) + "s";
+      d.style.animationDelay = (-Math.random() * 40) + "s";
+      box.appendChild(d);
+    }
+  })();
+
+  window.hwAddStudent = function(){ addStudent(true); };
+  window.hwSend = send;
+
+  addStudent(false);   /* start with one student row */
+})();
+
+/* ---------- GitHub Pages live-update cleanup ---------- */
+(function () {
+  var CLEANUP_KEY = "pps_live_update_cleanup_v1";
+  if (!("serviceWorker" in navigator) || localStorage.getItem(CLEANUP_KEY) === "done") return;
+
+  window.addEventListener("load", function () {
+    navigator.serviceWorker.getRegistrations()
+      .then(function (regs) {
+        return Promise.all(regs.map(function (reg) { return reg.unregister(); }));
+      })
+      .then(function () {
+        if (!("caches" in window)) return;
+        return caches.keys().then(function (keys) {
+          return Promise.all(keys.map(function (key) { return caches.delete(key); }));
+        });
+      })
+      .then(function () {
+        localStorage.setItem(CLEANUP_KEY, "done");
+        window.location.reload();
+      })
+      .catch(function () {
+        localStorage.setItem(CLEANUP_KEY, "done");
+      });
+  });
+})();
+
+</script>
+</body>
+</html>
