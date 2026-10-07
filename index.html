@@ -1,28 +1,3 @@
-/* welcome splash: min 3s, waits for page load (max 4.5s), then slides up smoothly */
-(function(){
-  var sp = document.getElementById("splash");
-  if(!sp) return;
-  var g = document.getElementById("welcomeGreeting"), sg = document.getElementById("splashGreeting");
-  if(g && sg) sg.textContent = g.textContent;
-  var started=false, minDone=false, loaded=(document.readyState==="complete");
-  function go(){
-    if(started) return; started=true;
-    requestAnimationFrame(function(){ requestAnimationFrame(function(){
-      sp.classList.add("leave");
-      setTimeout(function(){ document.body.classList.add("revealed"); }, 120);
-      setTimeout(function(){
-        document.body.classList.remove("splash-on");
-        sp.parentNode && sp.parentNode.removeChild(sp);
-      }, 1000);
-      setTimeout(function(){ document.body.classList.add("intro-done"); }, 3600);
-    }); });
-  }
-  setTimeout(function(){ minDone=true; if(loaded) go(); }, 3000);
-  window.addEventListener("load", function(){ loaded=true; if(minDone) go(); });
-  setTimeout(go, 4500);
-})();
-
-
 <!DOCTYPE html>
 <!--
   ============================================================================
@@ -5686,21 +5661,28 @@ document.getElementById("appRoot").classList.add("show");
 showHome();
 
 
-/* welcome splash: shows for 2s, then slides up and reveals the buttons */
+/* welcome splash: min 3s, waits for page load (max 4.5s), then slides up smoothly */
 (function(){
   var sp = document.getElementById("splash");
   if(!sp) return;
   var g = document.getElementById("welcomeGreeting"), sg = document.getElementById("splashGreeting");
   if(g && sg) sg.textContent = g.textContent;
-  setTimeout(function(){
-    sp.classList.add("leave");
-    document.body.classList.add("revealed");
-    setTimeout(function(){
-      document.body.classList.remove("splash-on");
-      sp.parentNode && sp.parentNode.removeChild(sp);
-    }, 1000);
-    setTimeout(function(){ document.body.classList.add("intro-done"); }, 3600);
-  }, 3000);
+  var started=false, minDone=false, loaded=(document.readyState==="complete");
+  function go(){
+    if(started) return; started=true;
+    requestAnimationFrame(function(){ requestAnimationFrame(function(){
+      sp.classList.add("leave");
+      setTimeout(function(){ document.body.classList.add("revealed"); }, 120);
+      setTimeout(function(){
+        document.body.classList.remove("splash-on");
+        sp.parentNode && sp.parentNode.removeChild(sp);
+      }, 1000);
+      setTimeout(function(){ document.body.classList.add("intro-done"); }, 3600);
+    }); });
+  }
+  setTimeout(function(){ minDone=true; if(loaded) go(); }, 3000);
+  window.addEventListener("load", function(){ loaded=true; if(minDone) go(); });
+  setTimeout(go, 4500);
 })();
 
 
